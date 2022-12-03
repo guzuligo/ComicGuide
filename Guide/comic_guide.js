@@ -20,7 +20,7 @@ class ComicGuide{
         +"\twidth:"+this.width+"px;\n"
         +"\theight:"+this.height+"px;\n"
         +"\tmax-height:"+this.height+"px;"
-        +"background-color: black;}\n";
+        +"background-color: #443344;}\n";
 
         s+="\n.ComicSuperDiv{\n\toverflow:hidden;\n"
         +"\tmax-width:"+this.width+"px;\n"
@@ -66,15 +66,27 @@ class ComicGuide{
 
 
     cacheImages(filenames=[]){
-        this.images=[]
+        this.image={}
         for (var i in filenames){
             var m=new Image();
             m.src=filenames[i];
-            this.images.push(m);
+            this.image[filenames[i]]=m;
         }
         return this;
     }
 
+    getImage(filename){
+        return this.image[filename];
+    }
 
+    //image file name stored in the database
+    add(filename){
+        obj={
+            filename:filename,
+            image:this.image[filename].cloneNode(),
+        }
+
+        return obj;
+    }
     
 }
