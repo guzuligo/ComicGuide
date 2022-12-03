@@ -87,7 +87,7 @@ class ComicGuide{
         parent=parent || this.div;
         
         var cNode={
-            id:newid,
+            id:this.newid,
             filename:filename,
             image:img,
             transform:{
@@ -106,10 +106,10 @@ class ComicGuide{
         //cNode.node=parent.appendChild(img);
         
         //add to inventory
-        this.added[newid]=cNode;
+        this.added[this.newid]=cNode;
 
 
-        newid++;
+        this.newid++;
         //add to div
         cNode.add();
         
