@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html><head>
 <script src="comic_guide.js"></script>
+<style>
+    @keyframes f1 {
+        0% {left:0px;}
+        100% {left:740px;}
+    }
+</style>
 <script>
     var comic;
     function body(){
@@ -12,15 +18,17 @@
 
         var a=comic.add("ooo.jpg");
         var b=comic.add("tttt.png")
-        a.transform.scale=0.5
+        //a.transform.scale=0.5
     }
+
+    //a.style.animation="none";a.offsetWidth; a.style.animation="f1 5s 1";
+    //.style.animationPlayState = 'paused';
+    //.style.animationPlayState = 'running';
 </script>
 </head>
 <body onload="body()" bgcolor="#333344">
 <div>
-    <div id="comic">
-       
-    </div>
+    <div id="comic"></div>
 </div>
 </body>
 </html>

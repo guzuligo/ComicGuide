@@ -1,6 +1,6 @@
 
 class ComicGuide{
-    constructor(div,width=740,height=360){
+    constructor(div,width=740,height=360,styleTag=""){
         this.div=div;
         this.document=div.getRootNode(); 
         this.width=width;
@@ -9,6 +9,9 @@ class ComicGuide{
         this.images={};
         this.added={};
         this.newid=0;
+
+        this.styleTag=styleTag;
+        this.animStyle=null;
         //Keep size consistant
         window.onresize=()=>{this.resize.call(this);}
         this._initStyles();
@@ -16,31 +19,48 @@ class ComicGuide{
     }
 
 
-    _initStyles(){
+    _initStyles(tag=""){
         //style
-        var s=".ComicMainDiv{\n\ttransform-origin: top left;overflow:hidden;margin-left: 0;\n"
+        this.styleTag=tag;
+        var s=this._makeMainStyle();
+        var r=this.document;
+        var st;
+        st=r.createElement('style');st.type = 'text/css';
+        st.innerHTML=s;
+        r.getElementsByTagName('head')[0].appendChild(st);
+        this.mainStyle=st;
+
+        this.div.className="ComicMainDiv"+tag+" ComicNoMove"+tag;
+        this.div.parentElement.className="ComicSuperDiv"+tag;
+        this.div.parentElement.parentElement.className="Comic0Margin"+tag;
+
+
+
+        st=r.createElement('style');st.type = 'text/css';
+        r.getElementsByTagName('head')[0].appendChild(st);
+        this.animStyle=st;
+
+    }
+
+    //useful to reset style by using this.mainStyle
+    _makeMainStyle(tag=""){
+        var s=".ComicMainDiv"+tag+"{\n\ttransform-origin: top left;overflow:hidden;margin-left: 0;\n"
         +"\twidth:"+this.width+"px;\n"
         +"\theight:"+this.height+"px;\n"
         +"\tmax-height:"+this.height+"px;"
         +"background-color: #443344;}\n";
 
-        s+="\n.ComicSuperDiv{\n\toverflow:hidden;\n"
+        s+="\n.ComicSuperDiv"+tag+"{\n\toverflow:hidden;\n"
         +"\tmax-width:"+this.width+"px;\n"
         +"\theight:"+this.height+"px;\n"
         +"background-color: red;}\n";
 
-        s+=".ComicNoMove{\n\tpointer-events: none;user-select: none;\n}"; 
+        s+=".ComicNoMove"+tag+"{\n\tpointer-events: none;user-select: none;\n}"; 
 
-        s+=".Comic0Margin{\n\tmargin-top: 0px;margin-bottom: 0px;"
+        s+=".Comic0Margin"+tag+"{\n\tmargin-top: 0px;margin-bottom: 0px;"
           +"margin-right: 0px;margin-left: 0px;\n"
           +"}\n";
-        var r=this.document;
-        var st=r.createElement('style');st.type = 'text/css';
-        st.innerHTML=s;r.getElementsByTagName('head')[0].appendChild(st);
-        
-        this.div.className="ComicMainDiv ComicNoMove";
-        this.div.parentElement.className="ComicSuperDiv"
-        this.div.parentElement.parentElement.className="Comic0Margin"
+        return s;
     }
 
 
@@ -70,11 +90,21 @@ class ComicGuide{
     cacheImages(filenames=[]){
         this.image={}
         for (var i in filenames){
+            //don't cache file with same name
+            if (this.image[filenames[i]])
+                continue;
+            //create image node and cache it
             var m=new Image();
-            m.src=filenames[i];
+            m.src=filenames[i];//TODO: on load
             this.image[filenames[i]]=m;
         }
         return this;
+    }
+
+    clearPage(){
+        for (var i in this.added)
+            this.added[i].delete();
+        this.newid=0;
     }
 
     getImage(filename){
@@ -83,6 +113,10 @@ class ComicGuide{
 
     //image file name stored in the database
     add(filename,parent=null){
+        if (!this.image[filename]){
+            console.warn("File %c\""+filename+"\"%cdoes not exists in the cache",'background:#002222');
+            return null;
+        }
         var img=this.image[filename].cloneNode();
         parent=parent || this.div;
         
