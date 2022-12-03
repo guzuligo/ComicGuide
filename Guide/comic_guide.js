@@ -12,10 +12,11 @@ class ComicGuide{
 
         this.styleTag=styleTag;
         this.animStyle=null;
+        this.animations={};
         //Keep size consistant
         window.onresize=()=>{this.resize.call(this);}
         this._initStyles();
-        this.resize()
+        this.resize();
     }
 
 
@@ -155,6 +156,17 @@ class ComicGuide{
         return cNode;
     }
 
+    //add animation to style
+    setAnimation(name,value="{}"){
+        this.animations[name+this.styleTag]=value;
+        this.animStyle.innerHTML="";
+        var a=this.animations;
+        for (var i in a)
+            this.animStyle.innerHTML+="@keyframes "+i+"{"+a[i]+"}";
+        console.log(this.animStyle.innerHTML)
+    }
+
+
     _addFunctionsToComicNode(cNode){
         Object.assign(cNode,
             {
@@ -202,6 +214,15 @@ class ComicGuide{
                         }deg) skew(${t.skew[0]}deg,${t.skew[1]}deg)`;
                         console.log(t)
                         this.node.style.transform=t;
+                    }
+                
+                ,
+                animate:
+                    function(name,time=1,repeat=1){
+                        var a=this.node;
+                        a.style.animation="none";a.offsetWidth;//force animation
+                        a.style.animation=name+" "+time+"s "+repeat+" forwards";
+                       
                     }
                 ,
                 self:
