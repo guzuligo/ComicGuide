@@ -13,6 +13,8 @@
 
         comic=document.getElementById("comic");
         comic=new ComicGuide(comic);
+        comic.margin[1]=22;comic.resize();//add margin at bottom
+
         comic.cacheImages(["ooo.jpg","tttt.jpg","tttt.png"]) ;
 
 
@@ -20,7 +22,12 @@
         var b=comic.add("tttt.png")
         //a.transform.scale=0.5
         comic.setAnimation("tester","from {left:0px;}\n to {left:512px;}\n")
-        comic.setAnimation("tester2","from {top:-512px;}\n to {top:0px;}\n")
+        comic.setAnimation("tester2","0% {top:-512px;left:0px;}\n 50% {top:-256px;left:256px}\n 100% {top:0px;left:0px}\n")
+
+        comic.setAnimation("tester3a","0% {top:-512px;left:0px;}\n 100% {top:-256px;left:256px}")
+        comic.setAnimation("tester3b","0% {top:-256px;left:256px}\n 100% {top:0px;left:0px}\n")
+
+        comic.added[0].animatex("tester3a 1s linear forwards,tester3b 1s 2.5s ease-out forwards")
     }
 
     //a.style.animation="none";a.offsetWidth; a.style.animation="f1 5s 1";
@@ -29,8 +36,12 @@
 </script>
 </head>
 <body onload="body()" bgcolor="#333344">
-<div>
-    <div id="comic"></div>
-</div>
+
+    <div>
+        <div id="comic"></div>
+    </div>
+
+<div style="transform-origin: bottom;">test</div>
+
 </body>
 </html>

@@ -1,4 +1,8 @@
 
+//configure
+//this.body to use the main html for resizing
+//this.margin to add a margin to resizing
+
 class ComicGuide{
     constructor(div,width=740,height=360,styleTag=""){
         this.div=div;
@@ -8,14 +12,14 @@ class ComicGuide{
         this.body=div.parentElement.parentElement.parentElement;
         this.images={};
         this.added={};
-        this.newid=0;
-
+        this._newid=0;
+        this.margin=[0,0]
         this.styleTag=styleTag;
-        this.animStyle=null;
+        this._animStyle=null;
         this.animations={};
         //Keep size consistant
         window.onresize=()=>{this.resize.call(this);}
-        this._initStyles();
+        this._initStyles(styleTag);
         this.resize();
     }
 
@@ -31,7 +35,7 @@ class ComicGuide{
         r.getElementsByTagName('head')[0].appendChild(st);
         this.mainStyle=st;
 
-        this.div.className="ComicMainDiv"+tag+" ComicNoMove"+tag;
+        this.div.className="ComicMainDiv"+tag+" ComicNoSelect"+tag;
         this.div.parentElement.className="ComicSuperDiv"+tag;
         this.div.parentElement.parentElement.className="Comic0Margin"+tag;
 
@@ -39,8 +43,13 @@ class ComicGuide{
 
         st=r.createElement('style');st.type = 'text/css';
         r.getElementsByTagName('head')[0].appendChild(st);
-        this.animStyle=st;
+        this._animStyle=st;
 
+        this._debug()
+    }
+
+    _debug(){
+        this.div.onclick=(a)=>console.log(a)
     }
 
     //useful to reset style by using this.mainStyle
@@ -56,7 +65,8 @@ class ComicGuide{
         +"\theight:"+this.height+"px;\n"
         +"background-color: red;}\n";
 
-        s+=".ComicNoMove"+tag+"{\n\tpointer-events: none;user-select: none;\n}"; 
+        s+=".ComicNoMove"+tag+"{pointer-events: none;}\n"
+        +".ComicNoSelect"+tag+"{user-select: none;user-drag:none;\n}\n"; 
 
         s+=".Comic0Margin"+tag+"{\n\tmargin-top: 0px;margin-bottom: 0px;"
           +"margin-right: 0px;margin-left: 0px;\n"
@@ -72,7 +82,7 @@ class ComicGuide{
         var div=this.div;
         var r= spr.getBoundingClientRect()
         var pp=this.body;//spr.parentElement.parentElement;
-        var b=[pp.clientWidth,pp.clientHeight];
+        var b=[pp.clientWidth-this.margin[0],pp.clientHeight-this.margin[1]];
         if (b[0]/b[1]<w/h){
             b=[w,b[0]]
         }
@@ -97,6 +107,7 @@ class ComicGuide{
             //create image node and cache it
             var m=new Image();
             m.src=filenames[i];//TODO: on load
+            m.className="ComicNoMove"+this.styleTag;
             this.image[filenames[i]]=m;
         }
         return this;
@@ -105,7 +116,7 @@ class ComicGuide{
     clearPage(){
         for (var i in this.added)
             this.added[i].delete();
-        this.newid=0;
+        this._newid=0;
     }
 
     getImage(filename){
@@ -122,9 +133,10 @@ class ComicGuide{
         parent=parent || this.div;
         
         var cNode={
-            id:this.newid,
+            id:this._newid,
             filename:filename,
             image:img,
+            classNames:"ComicNoMove"+this.styleTag,
             transform:{
                 position:[0,0],
                 rotation:0,
@@ -141,10 +153,10 @@ class ComicGuide{
         //cNode.node=parent.appendChild(img);
         
         //add to inventory
-        this.added[this.newid]=cNode;
+        this.added[this._newid]=cNode;
 
 
-        this.newid++;
+        this._newid++;
         //add to div
         cNode.add();
         
@@ -159,11 +171,11 @@ class ComicGuide{
     //add animation to style
     setAnimation(name,value="{}"){
         this.animations[name+this.styleTag]=value;
-        this.animStyle.innerHTML="";
+        this._animStyle.innerHTML="";
         var a=this.animations;
         for (var i in a)
-            this.animStyle.innerHTML+="@keyframes "+i+"{"+a[i]+"}";
-        console.log(this.animStyle.innerHTML)
+            this._animStyle.innerHTML+="@keyframes "+i+"{"+a[i]+"}";
+        console.log(this._animStyle.innerHTML)
     }
 
 
@@ -176,8 +188,7 @@ class ComicGuide{
                         delete this.comic.added[this.id];
                         this.image= this.node=this.parent=this.comic=
                                     this.transform       =null;
-                        
-                        
+                        return this;
                     }
                 ,   
                 remove://temporarly remove from parent
@@ -193,6 +204,7 @@ class ComicGuide{
                         if (this.isAdded) return this;
                         this.node=this.parent.appendChild(this.image)
                         this.isAdded=true;
+                        return this;
                     }
                 ,
                 setParent://Add to node
@@ -200,7 +212,7 @@ class ComicGuide{
                         parent=newParent
                         this.remove();
                         this.parent=parent.comic?parent.node:parent;
-
+                        return this;
                     }
                 ,
 
@@ -214,15 +226,70 @@ class ComicGuide{
                         }deg) skew(${t.skew[0]}deg,${t.skew[1]}deg)`;
                         console.log(t)
                         this.node.style.transform=t;
+                        return this;
                     }
                 
                 ,
                 animate:
+                    //repeat can be replaced by i for infinite or more settings
                     function(name,time=1,repeat=1){
+                        //i for infinity
+                        if (isNaN(repeat)){
+                            if (repeat.toLowerCase()=="i")
+                                repeat="infinite";
+                                else
+                                console.log("settings")
+                            }
+                        else
+                            repeat=repeat+" forwards"
+                        //TODO: easing useing cubic-bezier(0.12, 0, 0.39, 0);
+                        //TODO: Add help using https://cubic-bezier.com/#.42,0,.58,1
+                        var a=this.node;
+                        var _debug;
+                        a.style.animation="none";a.offsetWidth;//force animation
+                        a.style.animation=_debug=(name+" "+time+"s "+repeat);
+                        //console.log(_debug)
+                        return this;
+                       
+                    }
+                //example comic.added[0].animatex("tester3a 1s linear ,tester3b 1s 1s ease-out forwards")
+                ,animatex:
+                    function(conf){
                         var a=this.node;
                         a.style.animation="none";a.offsetWidth;//force animation
-                        a.style.animation=name+" "+time+"s "+repeat+" forwards";
-                       
+                        a.style.animation=conf;
+                        return this;
+                    }
+                
+                ,
+                addClasses:
+                    function(classNames){
+                        if (typeof(classNames)=="string")
+                            classNames=classNames.split(" ")
+                        for (var i in classNames)
+                            if (this.classNames.indexOf(classNames[i])==-1)
+                                this.classNames+=" "+classNames[i];
+                        this.classNames=this.classNames.trim();
+                        this.node.className=this.classNames;
+                        return this;
+                    }
+                ,
+                removeClasses:
+                    function(classNames){
+                        if (typeof(classNames)=="string")
+                            classNames=classNames.split(" ")
+                        for (var i in classNames)
+                            if (this.classNames.indexOf(classNames[i])!=-1){
+                                var s=classNames[i];
+                                var a=this.classNames.split(" ");
+                                //this.classNames=a.slice(0,a.indexOf(s)-1)+a.slice(a.indexOf(s)+s.length);
+                                a.splice(a.indexOf(s),1);
+                                this.classNames=a.join(" ");
+                            }
+
+                        this.classNames=this.classNames.trim();
+                        this.node.className=this.classNames;
+                        return this;
                     }
                 ,
                 self:
