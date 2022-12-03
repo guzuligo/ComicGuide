@@ -1,0 +1,85 @@
+<html>
+
+<style>
+
+div{
+
+max-width:300;
+
+max-height:300;
+
+ 
+
+}
+
+ 
+
+.nomove{
+
+pointer-events: none;
+
+user-select: none;
+
+}
+
+ 
+
+.marg{
+
+margin-top: 0px;
+
+margin-bottom: 0px;
+
+  margin-right: 0px;
+
+  margin-left: 0px;
+
+}
+
+ 
+
+ 
+
+</style>
+
+<script>
+
+i=0;
+
+window.setInterval(test, 20);
+
+function test(a){
+
+if (a!=null)
+
+                i=a;
+
+v=document.getElementById("img");
+
+i++;
+
+v.style="transform: matrix(1,0,0,1,"+(i*1)+",0);"
+
+ 
+
+}
+
+</script>
+
+<body class="marg">
+
+<div class="nomove" style="overflow:hidden">
+
+<img class="nomove" src="test.png" id="img" style="transform: matrix(1,0,0,1,-150,0);">
+
+</div>
+
+ 
+
+ 
+
+<button id="3" onclick="test(0)">test</button>
+
+ 
+<input type="file" id="save" />
+</body></html>

@@ -1,0 +1,48 @@
+.maindiv{
+
+    /*
+    max-width:740;
+    padding-bottom: 100%;
+    float: right;
+    height: auto,fit-content;
+    transform: scale(2);
+    max-width: 740;
+    max-height:360;
+    max-height: max-content;
+    width: auto;
+    object-fit: cover;
+    */
+    /*aspect-ratio:16/9;*/
+    width: 740;
+    max-height:360;
+    margin-left: 0;
+    overflow:hidden;
+    background-color: black;
+    d1isplay:inline-block;
+    transform-origin: top left;/**/
+
+    
+}
+
+.superdiv{
+    max-width: min-content;
+    overflow:hidden;
+    background:green;
+}
+    
+.nomove{
+
+    pointer-events: none;
+    user-select: none;
+
+}
+
+
+.marg{
+
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-right: 0px;
+    margin-left: 0px;
+
+}
