@@ -9,13 +9,17 @@
         comic=new ComicGuide(comic);
         comic.cacheImages(["ooo.jpg","tttt.jpg","tttt.png"]) ;
 
+
+        var a=comic.add("ooo.jpg");
+        var b=comic.add("tttt.png")
+        a.transform.scale=0.5
     }
 </script>
 </head>
 <body onload="body()" bgcolor="#333344">
 <div>
     <div id="comic">
-        <img src="tttt.png" >
+       
     </div>
 </div>
 </body>

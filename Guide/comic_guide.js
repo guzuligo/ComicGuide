@@ -6,7 +6,9 @@ class ComicGuide{
         this.width=width;
         this.height=height;
         this.body=div.parentElement.parentElement.parentElement;
-
+        this.images={};
+        this.added={};
+        this.newid=0;
         //Keep size consistant
         window.onresize=()=>{this.resize.call(this);}
         this._initStyles();
@@ -80,13 +82,98 @@ class ComicGuide{
     }
 
     //image file name stored in the database
-    add(filename){
-        obj={
+    add(filename,parent=null){
+        var img=this.image[filename].cloneNode();
+        parent=parent || this.div;
+        
+        var cNode={
+            id:newid,
             filename:filename,
-            image:this.image[filename].cloneNode(),
+            image:img,
+            transform:{
+                position:[0,0],
+                rotation:0,
+                scale:1,
+                skew:[0,0],
+            },
+            isAdded:false,
+            node:null,
+            parent:parent.comic?parent.node:parent,
+            comic:this,
         }
 
-        return obj;
+        this._addFunctionsToComicNode(cNode);
+        //cNode.node=parent.appendChild(img);
+        
+        //add to inventory
+        this.added[newid]=cNode;
+
+
+        newid++;
+        //add to div
+        cNode.add();
+        
+
+        //https://www.w3schools.com/cssref/css3_pr_transform.php
+        cNode.node.style.position="absolute"
+        cNode.node.style.left="0px"
+        cNode.node.style.top="0px"
+        return cNode;
+    }
+
+    _addFunctionsToComicNode(cNode){
+        Object.assign(cNode,
+            {
+                delete://clean up
+                    function(){
+                        this.remove();
+                        delete this.comic.added[this.id];
+                        this.image= this.node=this.parent=this.comic=
+                                    this.transform       =null;
+                        
+                        
+                    }
+                ,   
+                remove://temporarly remove from parent
+                    function(){
+                        if (!this.isAdded) return this;
+                        this.parent.removeChild(this.image)
+                        this.isAdded=false;
+                        return this;
+                    }
+                ,
+                add://add to parent
+                    function(){
+                        if (this.isAdded) return this;
+                        this.node=this.parent.appendChild(this.image)
+                        this.isAdded=true;
+                    }
+                ,
+                setParent://Add to node
+                    function(newParent){
+                        parent=newParent
+                        this.remove();
+                        this.parent=parent.comic?parent.node:parent;
+
+                    }
+                ,
+
+                applyTransform:
+                    function(){
+                        var t=this.transform;
+                        t=
+                        ` scale(${t.scale
+                        }) translate(${t.position[0]}px, ${t.position[1]
+                        }px) rotate(${t.rotation
+                        }deg) skew(${t.skew[0]}deg,${t.skew[1]}deg)`;
+                        console.log(t)
+                        this.node.style.transform=t;
+                    }
+                ,
+                self:
+                    function(){return this}
+            }
+        );
     }
     
 }
