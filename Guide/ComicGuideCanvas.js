@@ -5,7 +5,7 @@
 
 (window.ComicGuide=window.ComicGuide||{}).canvas =
 class ComicGuide{
-    constructor(div,width=740,height=360,styleTag=""){
+    constructor(div,width=740,height=360,maxScale=1,styleTag=""){
         this.node=div;
         this.document=div.getRootNode(); 
         this.width=width;
@@ -19,7 +19,7 @@ class ComicGuide{
         this._cssStyles=null;
         this.animations={};
         this.styles={};
-        this.maxScale=1;
+        this.maxScale=maxScale;
         
         this._autoRefresh=true;//trigger refresh events instead of waiting for a call
 
@@ -246,11 +246,11 @@ class ComicGuide{
         var a;
         this._cssStyles.innerHTML+="/*animation keyframes*/\n";
         a=this.animations;for (var i in a)
-            this._cssStyles.innerHTML+="@keyframes "+i+"{"+a[i]+"}";
+            this._cssStyles.innerHTML+="@keyframes "+i+"{"+a[i]+"}\n\n";
         this._cssStyles.innerHTML+="\n\n/*style classes*/\n";
         a=this.styles;for (var i in a)
-            this._cssStyles.innerHTML+=i+"{"+a[i]+"}";
-        console.log(this._cssStyles.innerHTML);
+            this._cssStyles.innerHTML+=i+"\n{"+a[i]+"}\n\n";
+        //console.log(this._cssStyles.innerHTML);
         return this;
     }
 
@@ -291,7 +291,7 @@ class ComicGuide{
                         if(filename){
                             return this.comic.add(filename,this);
                         }
-                        console.log("O:",this.parent)
+                        //console.log("O:",this.parent)
                         if (this.isAdded) return this;
                         this.node=this.parent.node.appendChild(this.image)
                         this.isAdded=true;
@@ -316,7 +316,7 @@ class ComicGuide{
                         }) translate(${t.position[0]}px, ${t.position[1]
                         }px) rotate(${t.rotation
                         }deg) skew(${t.skew[0]}deg,${t.skew[1]}deg)`;
-                        console.log(t)
+                        //console.log(t)
                         this.node.style.transform=t;
                         return this;
                     }

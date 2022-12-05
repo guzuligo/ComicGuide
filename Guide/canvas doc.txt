@@ -1,0 +1,123 @@
+class ComicGuideCanvas
+
+FUNCTIONS
+-------------
+constructor(div,width=740,height=360,maxScale=1,styleTag=""){
+div: the node to use as the place for the comic. Parent should be a div too to balance the size
+width and height are comic dimensions when in normal scale
+maxScale is how much the comic is allowed to expand beyound normal scale
+styleTag is a name to add to all classes created by this 
+
+cacheImages(filenames=[],folder="./")
+cache images into this.images.
+filename is an array of image filenames
+folder is the location of the images. Change it if not in same directory
+
+clearCachedImages()
+
+clearPage()
+Removes all added objects
+
+getImage(filename)
+returns html node of cached images
+
+add(filename,parent=null)
+adds an image from the cache using the filename
+parent is the cNode to add image to
+You can also add different html elements by adding . to the filename provided.
+Example. add(".div") will add a <div> to the comic
+
+setAnimation(name,value="{}")
+creates a css keyframe with a name and value provided
+Example
+setAnimation("GoDown","0% {top:0px} 100% {top:10px}")
+
+setStyle(name,value={},comicMainDivChildrenOnly=false)
+adds a style in the css inventory.
+name is the css selector
+value is the css code to add
+comicMainDivChildrenOnly will make the style only applies if element is added to the comic and no where else in the page.
+example:
+comic.setStyle(".blur","filter:blur(66px);")
+comic.added[2].addClasses("blur")
+
+--todo removeStyle from nodes
+
+resize()
+Should be triggered by window resizing to adjust size.
+You can manually trigger it if resizing failed
+
+--private--
+_initStyles()
+Applies the main css 
+
+_makeMainStyle()
+Reconstructs the main css , used by _initStyles
+
+--
+
+VARIABLES
+-------------
+node: the html node related to this
+body: the reference to use scale
+images: inventory of images
+added: currently added cNodes to the canvas
+margin[x,y] how much to leave out when scaling
+animations: reference of all css animations 
+styles: reference of all css styles 
+maxScale: Max scale to expand. Default is 1, which is 100%
+_autoRefresh: To allow referesh events to trigger
+
+
+
+cNode
+FUNCTIONS
+
+add(filename=null)
+If no filename provided, and node is removed, add it back
+If filename provided, adds filename using comic.add(filename,this)
+
+remove()
+remove the html node from display
+
+setParent(newParent)
+Re-parents the node
+
+applyTransform()
+If transform varialbe modified, use this to apply new transforms
+
+animate(name,time=1,repeats=1)
+Simplified animate function. Use to apply animation to this cNode
+Make sure the animation name was created using comic.setAnimation function
+
+animation(conf)
+this applies animation using node.style.animation function
+alternative name:: animatex
+
+addClasses(classnames:string)
+adds the classes added by comic.setStyle function
+
+removeClasses
+remove a class from the node
+
+delete()
+Destroies the cNode
+-------------
+VARIABLES
+-------------
+id: unique id for this node.
+filename, the filename provided
+image: the node connected. It can be a div if .div used to initialize
+classNames all classnames attached to this
+transform: the transforms to apply to node. See details:
+transform:{
+    position:[0,0],
+    rotation:0,
+    scale:1,
+    skew:[0,0],
+}
+
+isAdded: If this cNode is already on page
+node: The node connected to this
+parent: parent cNode or comic if not specified
+comic: the comic parent connected to this

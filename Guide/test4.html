@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html><head>
+<script src="ComicGuideCanvas.js"></script>
+<script src="ComicGuideManager.js"></script>
+<script>
+    var comic,manager;
+    var setup={
+            layers:[
+                [
+                    {
+                        node:".div",
+                        class:["","tester3a 1s linear,tester3b 0.2s linear"],
+                        children:[
+                            {
+                                node:"ooo.jpg",
+                            },
+                            {
+                                node:".button",
+                                properties:{innerHTML:"hello"}
+                            }
+                        ]
+                        
+                    }
+                ]
+            ]
+        };
+
+
+    function body(){
+
+        comic=document.getElementById("comic");
+
+        comic=new ComicGuide.canvas(comic);
+        manager=new ComicGuide.manager(comic);
+
+
+        comic.margin[1]=22;//add margin at bottom
+        comic.maxScale=2;
+        comic.resize();//trigger fixing size
+
+        comic.cacheImages(["ooo.jpg","tttt.jpg","tttt.png"]) ;
+        
+        comic.setStyle("textarea","resize: none;border:none; pointer-events: none;background:transparent",true)
+        comic.setAnimation("tester","from {left:0px;}\n to {left:512px;}\n")
+        comic.setAnimation("tester2","0% {top:-512px;left:0px;}\n 50% {top:-256px;left:256px}\n 100% {top:0px;left:0px}\n")
+
+        comic.setAnimation("tester3a","0% {top:-512px;left:0px;}\n 100% {top:-256px;left:256px}")
+        comic.setAnimation("tester3b","0% {top:-256px;left:256px}\n 100% {top:0px;left:0px}\n")
+        comic._refreshStyles()
+        
+        manager.setPage(setup)
+
+        //var d=comic.add(".div");
+        //var c=comic.add(".textarea");
+        //var a=d.add("ooo.jpg",d);
+        //var b=comic.add("tttt.png",d)
+        
+        //c.node.innerHTML="Hello"
+        //a.transform.scale=0.5
+
+        
+
+        //a.animatex("tester3a 1s linear forwards,tester3b 1s 2.5s ease-out forwards")
+
+        comic.setAnimation("text","0%{length:0} 100% {length:20} ")
+        //c.setText("Hello world").animate("text",3)
+    }
+
+    function gofull(){
+      document.getElementById("full").requestFullscreen()
+      //window.setTimeout(100,()=>comic.resize())
+      
+    }
+    //a.style.animation="none";a.offsetWidth; a.style.animation="f1 5s 1";
+    //.style.animationPlayState = 'paused';
+    //.style.animationPlayState = 'running';
+    //comic.setStyle(".ComicMainDiv > div","max-width: 2ch;overflow:hidden;")
+    
+</script>
+</head>
+<body onload="body()" bgcolor="#333344" class="Comic0Margin">
+        <div id="full"  bgcolor="#333355">
+            <div >
+                <div id="comic"></div>
+            </div>
+            <div style="transform-origin: bottom;" onclick="gofull()">test</div>
+        </div>
+    
+</body>
+</html>
