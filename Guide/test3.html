@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html><head>
-<script src="comic_guide.js"></script>
+<script src="ComicGuideCanvas.js"></script>
 <style>
     @keyframes f1 {
         0% {left:0px;}
@@ -12,7 +12,7 @@
     function body(){
 
         comic=document.getElementById("comic");
-        comic=new ComicGuide.guide(comic);
+        comic=new ComicGuide.canvas(comic);
         comic.margin[1]=22;//add margin at bottom
         comic.maxScale=2;
         comic.resize();//trigger fixing size
