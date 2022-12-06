@@ -2,6 +2,7 @@
 <html><head>
 <script src="../ComicGuideCanvas.js"></script>
 <script src="../ComicGuideManager.js"></script>
+<script src="../ComicGuideInterface.js"></script>
 <script>
     var comic,manager;
     var pages=
@@ -44,7 +45,7 @@
         ,
 
         {
-            exceptions:["xyz"],
+            //exceptions:["xyz"],
             layers:[
                 [//layer elements
                     {
@@ -106,13 +107,13 @@
 
         comic=new ComicGuide.canvas(comic);
         manager=new ComicGuide.manager(comic);
-
+        interface=new ComicGuide.interface(manager);
 
         comic.margin[1]=22;//add margin at bottom
         comic.maxScale=2;
         comic.resize();//trigger fixing size
         console.log("loaded page?",
-            manager.load(setup).gotoPage(0)
+            manager.load(setup).goto(0)
         );
 
     }

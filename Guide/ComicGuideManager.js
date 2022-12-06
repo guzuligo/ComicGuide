@@ -21,6 +21,10 @@ class ComicManager{
             ]
         }*/
         this.nextTick();
+
+
+        this.interfaceLayer=null;
+        this.interface=null;
     }
 
     nextTick(){
@@ -44,7 +48,7 @@ class ComicManager{
         var oldTag=c.addingTag;c.addingTag="manager";
         this.pageContainer=c.add(".div");//containing layers
         this.page=c.add(".div",this.pageContainer);
-        this.interface=c.add(".div");
+        this.interfaceLayer=c.add(".div");
         c.addingTag=oldTag;
         return this;
     }
@@ -66,6 +70,8 @@ class ComicManager{
         
         var c=this.comic.clearCachedImages().clearPage().deleteCss(true);
         this._basicSetup();
+        if (this.interface)
+            this.interface.reset();
 
         var t;
         this.jsonComic=jsonComic;
@@ -82,7 +88,7 @@ class ComicManager{
     }
 
     //return true if successfully went to next page
-    gotoPage(pageNumber){
+    goto(pageNumber){
         if (pageNumber>=this.jsonComic.pages.length || pageNumber<0)
             return false;
         //console.log("page: ",this.jsonComic.pages[pageNumber]  )
@@ -92,6 +98,16 @@ class ComicManager{
         );
         this.pageNumber=pageNumber;
         return true;
+    }
+
+    //next page
+    next(){
+        this.goto(this.pageNumber+1);
+    }
+
+    //previous page
+    prev(){
+        this.goto(this.pageNumber-1);
     }
 
 

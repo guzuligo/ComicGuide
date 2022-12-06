@@ -118,7 +118,7 @@ class ComicCanvas{
 
     //onclick tests
     _debug(){
-        this.node.onclick=(a)=>console.log(a)
+        //this.node.onclick=(a)=>console.log(a)
     }
 
     //useful to reset style by using this.mainStyle

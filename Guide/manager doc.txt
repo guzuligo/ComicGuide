@@ -50,6 +50,18 @@ loads a comic from json data. See below:
     }
 
 
+goto(pageNumber)
+Jumps to page number
+
+next()
+next page
+
+prev()
+previous page
+
 VARIABLES
 -------------
 timelineTick: The FPS of timeline. The number of millisecond to pass for one tick
+comic: references back to canvas
+interface: references to interface class
+interfaceLayer: Div created to show interface

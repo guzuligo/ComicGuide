@@ -75,7 +75,7 @@ styles: reference of all css styles
 maxScale: Max scale to expand. Default is 1, which is 100%
 _autoRefresh: To allow referesh events to trigger
 addingTag: tag added to newly added cNodes to group them
-
+manager: references to comic manager
 
 cNode
 FUNCTIONS
