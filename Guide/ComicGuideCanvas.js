@@ -20,7 +20,7 @@ class ComicGuide{
         this.animations={};
         this.styles={};
         this.maxScale=maxScale;
-        
+        this.events=[];
         this.addingTag="";//current tagging for any added element
 
         this._autoRefresh=true;//trigger refresh events instead of waiting for a call
@@ -28,7 +28,8 @@ class ComicGuide{
 
 
         //Keep size consistant
-        window.addEventListener("resize",()=>{this.resize.call(this);});
+        //window.addEventListener("resize",()=>{this.resize.call(this);});
+        this._initEvents();
 
         //initialize styles
         this._initStyles()._initDefaultStyles();
@@ -36,6 +37,58 @@ class ComicGuide{
 
         this.resize();
     }
+
+    _initEvents(){
+        this.events=[
+            [window,"resize",()=>{this.resize.call(this);}]
+        ];
+        var e=this.events;
+        for (var i=0;i<e.length;i++)
+            e[i][0].addEventListener(e[i][1],e[i][2]);
+    }
+
+    _clearEvents(){
+        var e=this.events;
+        for (var i=0;i<e.length;i++)
+            e[i][0].removeEventListener(e[i][1],e[i][2]);
+    }
+
+    addEventListener(target_,event_,function_){
+        this.events.push([target_,event_,function_]);
+        target_.addEventListener(event_,function_);
+    }
+
+    removeEventListener(target_,event_,function_=null){
+        var e=this.events;
+        this.events=[];
+        var toadd;
+        for (var i=0;i<e.length;i++){
+            toadd=true;
+            if (e[i][0]==target_)
+                if(!event_ || e[i][1]==event_)
+                    if(!function_ || e[i][2]==function_){
+                        toadd=false;//removing required
+                        e[i][0].removeEventListener(e[i][1],e[i][2]);
+                    }
+            if (toadd)//If removing not required, add it
+                    this.events.push([e[i][0],e[i][1],e[i][2]])
+        }
+    }
+
+    hasListener(target_,event_,function_){
+        var e=this.events;
+        for (var i=0;i<e.length;i++){
+            if (e[i][0]==target_)
+                if(!event_ || e[i][1]==event_)
+                    if(!function_ || e[i][2]==function_){
+                        return true
+                    }
+        }
+        return false;
+    }
+
+
+
 
     //fix comic dimensions
     _initStyles(){
