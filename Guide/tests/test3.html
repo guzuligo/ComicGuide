@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html><head>
-<script src="ComicGuideCanvas.js"></script>
+<script src="../ComicGuideCanvas.js"></script>
 <style>
     @keyframes f1 {
         0% {left:0px;}
@@ -17,7 +17,7 @@
         comic.maxScale=2;
         comic.resize();//trigger fixing size
 
-        comic.cacheImages(["ooo.jpg","tttt.jpg","tttt.png"]) ;
+        comic.cacheImages(["ooo.jpg","tttt.jpg","tttt.png"],"./") ;
         
         comic.setStyle("textarea","resize: none;border:none; pointer-events: none;background:transparent",true)
 

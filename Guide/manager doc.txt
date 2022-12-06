@@ -19,6 +19,9 @@ pageJsonSetup={
             "properties":{}           //example:{innerHTML:"hello"}
 
             "tag": extra tag for this node
+            "timeline":{
+                frame#:functoin
+            }
         }]
     ]
 }
@@ -45,3 +48,8 @@ loads a comic from json data. See below:
 
         }
     }
+
+
+VARIABLES
+-------------
+timelineTick: The FPS of timeline. The number of millisecond to pass for one tick

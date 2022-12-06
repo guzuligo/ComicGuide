@@ -1,10 +1,42 @@
 (window.ComicGuide=window.ComicGuide||{}).manager =
 class ComicManager{
     constructor(ComicCanvas){
+        
         this.comic=ComicCanvas;
+        this.comic.manager=this;
+
         this.jsonComic={};
         this._basicSetup();
         this.pageNumber=-1;
+        
+        //for timer events
+        this.timelineTick=100;//milliseconds for next tick
+        this.time=-1;//how many ticks passed
+        this.timelimit=10000;
+        this.timeline={};//events on ticks in the following format:
+        /*
+        {
+            time:[ //events
+                [   function()  ] 
+            ]
+        }*/
+        this.nextTick();
+    }
+
+    nextTick(){
+        //Do we have actions to execute?
+        if (this.time>0 && this.timeline[this.time]){
+            var t=this.timeline[this.time];
+            //execute functions
+            console.log("yo?",t)
+            for (var i in t){
+                console.log("yaa",t[i])
+                t[i]();
+            }
+        }
+        window.setTimeout(()=>this.nextTick(),this.timelineTick);
+        if(this.time<this.timelimit)
+            this.time++;
     }
 
     _basicSetup(){
@@ -38,7 +70,7 @@ class ComicManager{
         var t;
         this.jsonComic=jsonComic;
         this.comic.cacheImages(jsonComic.images,jsonComic.folder||"./");
-
+        
         t=jsonComic.css.styles;
         for (var i in t)
             c.setStyle(t[i][0],t[i][1],t[i][2]);
@@ -157,7 +189,7 @@ class ComicManager{
     }
 
     _addNodeConf(elementConf,cNode){
-        var i;
+        var i,e;
         if (elementConf.class)
             cNode.animate(elementConf.class[1]||"").addClasses(elementConf.class[0]||"");
 
@@ -178,6 +210,18 @@ class ComicManager{
         if (elementConf.children)
             for (i in elementConf.children)
                 this.addNode(elementConf.children[i],cNode);
+
+        if (elementConf.timeline){
+             e=elementConf.timeline;
+            for ( i in e){
+                console.log(">>",i)
+                if (!this.timeline[i])
+                    this.timeline[i]=[];
+                this.timeline[i].push(
+                    ()=>{console.log("exe",e[i]);e[i].call(cNode);}
+                );
+            }
+        }
         return cNode;
     }
 

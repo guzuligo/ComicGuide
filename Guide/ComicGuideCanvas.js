@@ -22,7 +22,7 @@ class ComicCanvas{
         this.maxScale=maxScale;
         this.events=[];
         this.addingTag="";//current tagging for any added element
-
+        this.manager=null;//ComicGuide manager
         this._autoRefresh=true;//trigger refresh events instead of waiting for a call
 
 
@@ -143,6 +143,8 @@ class ComicCanvas{
         s+=".Comic0Margin"+tag+"{\n\tmargin-top: 0px;margin-bottom: 0px;"
           +"margin-right: 0px;margin-left: 0px;\n"
           +"}\n";
+
+        s+=".cNodeDefault"+tag+"{\n\tposition:absolute;left:0px;top:0px\n}\n";
         return s;
     }
 
@@ -183,7 +185,7 @@ class ComicCanvas{
             //create image node and cache it
             var m=new Image();
             m.src=folder+filenames[i];//TODO: on load
-            m.className="ComicNoMove"+this.styleTag;
+            //m.className="ComicNoMove"+this.styleTag;
             this.image[filenames[i]]=m;
         }
         return this;
@@ -254,7 +256,7 @@ class ComicCanvas{
             id:this._newid,
             filename:filename,
             image:img,
-            classNames:"ComicNoMove"+this.styleTag,
+            classNames:"",
             transform:{
                 position:[0,0],
                 rotation:0,
@@ -277,13 +279,15 @@ class ComicCanvas{
 
         this._newid++;
         //add to div
-        cNode.add();
+
+        cNode.add().addClasses("ComicNoMove"+this.styleTag+
+        " cNodeDefault" +this.styleTag);
         
 
         //https://www.w3schools.com/cssref/css3_pr_transform.php
-        cNode.node.style.position="absolute"
-        cNode.node.style.left="0px"
-        cNode.node.style.top="0px"
+        //cNode.node.style.position="absolute"
+        //cNode.node.style.left="0px"
+        //cNode.node.style.top="0px"
         return cNode;
     }
 

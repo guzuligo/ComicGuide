@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html><head>
-<script src="ComicGuideCanvas.js"></script>
-<script src="ComicGuideManager.js"></script>
+<script src="../ComicGuideCanvas.js"></script>
+<script src="../ComicGuideManager.js"></script>
 <script>
     var comic,manager;
     var pages=
@@ -22,7 +22,13 @@
                             {
                                 tag:"removable",
                                 node:".button",
-                                properties:{innerHTML:"hello",name:"btn"}
+                                properties:{
+                                    innerHTML:"hello",name:"btn",
+                                    style:"left:10px"
+                                },
+                                timeline:{
+                                    10:function(){console.log("TIMELINE!!",this)}
+                                }
                             }
                         ]
                         
@@ -48,12 +54,16 @@
                         children:[
                             {
                                 node:"tttt.jpg",
-                                class:["","blur 1s 0s reverse,blur 1s ease-out"]
+                                class:["","blur 1s 0s reverse,blur 1s ease-out"],
+                                
                             },
                             {
                                 tag:"removable",
                                 node:".button",
-                                properties:{innerHTML:"hello",name:"btn"}
+                                properties:{
+                                    innerHTML:"hello",name:"btn",
+                                    
+                                }
                             }
                         ]
                         

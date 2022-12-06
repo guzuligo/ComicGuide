@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html><head>
+<script src="../ComicGuideCanvas.js"></script>
+<script src="../ComicGuideManager.js"></script>
+<script>
+    var comic,manager;
+    var pages=
+    [
+        {
+            exceptions:["xyz"],
+            layers:[
+                [//layer elements
+                    {
+                        tag:"xyz",
+                        node:".div",
+                        class:["","tester3a 1s 1 steps(7) 0s forwards,2s linear,tester3b 1s"],
+                        children:[
+                            {
+                                node:"ooo.jpg",
+                                class:["","blur 1s 0s reverse,blur 1s ease-out"]
+                            },
+                            {
+                                tag:"removable",
+                                node:".button",
+                                properties:{
+                                    innerHTML:"hello",name:"btn",
+                                    style:"left:10px"
+                                },
+                                timeline:{
+                                    10:function(){console.log("TIMELINE!!",this)}
+                                }
+                            }
+                        ]
+                        
+                    },{
+                        node:null,
+                        tag:"xyz",
+                        properties:{name:"keep"}
+                    }
+                ]
+            ]
+        }
+
+        ,
+
+        {
+            exceptions:["xyz"],
+            layers:[
+                [//layer elements
+                    {
+                        tag:"xyz",
+                        node:".div",
+                        class:["","tester3a 1s 1 steps(7) 0s forwards,2s linear,tester3b 1s"],
+                        children:[
+                            {
+                                node:"tttt.jpg",
+                                class:["","blur 1s 0s reverse,blur 1s ease-out"],
+                                
+                            },
+                            {
+                                tag:"removable",
+                                node:".button",
+                                properties:{
+                                    innerHTML:"hello",name:"btn",
+                                    
+                                }
+                            }
+                        ]
+                        
+                    },{
+                        node:null,
+                        tag:"xyz",
+                        properties:{name:"keep"}
+                    }
+                ]
+            ]
+        }
+    
+    ];
+    
+    //
+    var setup={
+        folder:"./",
+        images:["ooo.jpg","tttt.jpg","tttt.png"],
+        pages:pages,
+        css:{
+            animations:[
+                ["tester3a","0% {top:-512px;left:0px;}\n 100% {top:-256px;left:256px}"],
+                ["tester3b","0% {top:-256px;left:256px}\n 100% {top:0px;left:0px}\n"],
+                ["tester2","0% {top:-512px;left:0px;}\n 50% {top:-256px;left:256px}\n 100% {top:0px;left:0px}\n"],
+                ["tester","from {left:0px;}\n to {left:512px;}\n"],
+                ["blur","0% {filter:blur(30px);} 100% {filter:blur(1px);}"],
+            ],
+            styles:[
+                ["textarea","resize: none;border:none; pointer-events: none;background:transparent",true],
+
+            ]
+
+
+        }
+    }
+
+    function body(){
+
+        comic=document.getElementById("comic");
+
+        comic=new ComicGuide.canvas(comic);
+        manager=new ComicGuide.manager(comic);
+
+
+        comic.margin[1]=22;//add margin at bottom
+        comic.maxScale=2;
+        comic.resize();//trigger fixing size
+        console.log("loaded page?",
+            manager.load(setup).gotoPage(0)
+        );
+
+    }
+
+    function gofull(){
+      document.getElementById("full").requestFullscreen()
+      //window.setTimeout(100,()=>comic.resize())
+      
+    }
+    //a.style.animation="none";a.offsetWidth; a.style.animation="f1 5s 1";
+    //.style.animationPlayState = 'paused';
+    //.style.animationPlayState = 'running';
+    //comic.setStyle(".ComicMainDiv > div","max-width: 2ch;overflow:hidden;")
+
+    //comic.added[4].node.getAnimations()[0].currentTime 
+</script>
+</head>
+<body onload="body()" bgcolor="#333344" class="Comic0Margin">
+        <div id="full"  bgcolor="#333355">
+            <div >
+                <div id="comic"></div>
+            </div>
+            <div style="transform-origin: bottom;" onclick="gofull()">test</div>
+        </div>
+    
+</body>
+</html>
