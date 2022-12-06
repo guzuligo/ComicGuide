@@ -15,8 +15,11 @@ folder is the location of the images. Change it if not in same directory
 
 clearCachedImages()
 
-clearPage()
+clearPage(tag=null,exceptionsTag=null)
 Removes all added objects
+Use tag to only clear ones with specific tag
+if tag="*something" starting with star, only clear if string contains that something
+exceptionsTag: Will reserve ones that contain the tag
 
 getImage(filename)
 returns html node of cached images
@@ -67,7 +70,7 @@ animations: reference of all css animations
 styles: reference of all css styles 
 maxScale: Max scale to expand. Default is 1, which is 100%
 _autoRefresh: To allow referesh events to trigger
-
+addingTag: tag added to newly added cNodes to group them
 
 
 cNode
@@ -121,3 +124,4 @@ isAdded: If this cNode is already on page
 node: The node connected to this
 parent: parent cNode or comic if not specified
 comic: the comic parent connected to this
+tag: used to group cNodes

@@ -5,9 +5,11 @@
 <script>
     var comic,manager;
     var setup={
+            exceptions:["xyz"],
             layers:[
-                [
+                [//layer elements
                     {
+                        tag:"xyz",
                         node:".div",
                         class:["","tester3a 1s linear,tester3b 0.2s linear"],
                         children:[
@@ -15,11 +17,16 @@
                                 node:"ooo.jpg",
                             },
                             {
+                                tag:"removable",
                                 node:".button",
-                                properties:{innerHTML:"hello"}
+                                properties:{innerHTML:"hello",name:"btn"}
                             }
                         ]
                         
+                    },{
+                        node:null,
+                        tag:"xyz",
+                        properties:{name:"keep"}
                     }
                 ]
             ]
@@ -48,7 +55,7 @@
         comic.setAnimation("tester3b","0% {top:-256px;left:256px}\n 100% {top:0px;left:0px}\n")
         comic._refreshStyles()
         
-        manager.setPage(setup)
+        manager.newPage(setup)
 
         //var d=comic.add(".div");
         //var c=comic.add(".textarea");
@@ -76,6 +83,7 @@
     //.style.animationPlayState = 'running';
     //comic.setStyle(".ComicMainDiv > div","max-width: 2ch;overflow:hidden;")
     
+    //comic.added[4].node.getAnimations()[0].currentTime 
 </script>
 </head>
 <body onload="body()" bgcolor="#333344" class="Comic0Margin">

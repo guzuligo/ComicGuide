@@ -21,6 +21,8 @@ class ComicGuide{
         this.styles={};
         this.maxScale=maxScale;
         
+        this.addingTag="";//current tagging for any added element
+
         this._autoRefresh=true;//trigger refresh events instead of waiting for a call
 
 
@@ -142,13 +144,36 @@ class ComicGuide{
             //console.log("deleted: "+i)
         }
         this.image={};
+        return this;
+    }
+    //tag null removes all
+    //tag string removes =tag
+    //tag *string removes containing string
+    clearPage(tag=null,exceptionsTag=null){
+        console.log(exceptionsTag)
+        for (var i in this.added){
+            var t=this.added[i].tag;
+            if(tag == null || (tag[0]!="*"?(t==tag):t.indexOf(tag.substr(1))>-1))
+                if(exceptionsTag==null || !this.__inString(t,exceptionsTag))
+                { 
+                    //console.log(tag,exceptionsTag,this.__inString(t,exceptionsTag),this.added[i])                     
+                    this.added[i].remove();
+                    delete this.added[i];
+                }
+        }
+        if (tag==null && exceptionsTag==null)            
+            this._newid=0;
+
+        return this;
     }
 
-    clearPage(){
-        for (var i in this.added)
-            this.added[i].delete();
-        this._newid=0;
-        return this;
+    __inString(_string,_stringarray){
+        if (_stringarray==null)
+            return false;
+        for (var i in _stringarray)
+            if (_string.indexOf(_stringarray[i])!=-1)
+                return true;
+        return false;
     }
 
     getImage(filename){
@@ -187,6 +212,7 @@ class ComicGuide{
             node:null,
             parent:parent,//.comic?parent.node:parent,
             comic:this,
+            tag:this.addingTag
         }
 
         this._addFunctionsToComicNode(cNode);
@@ -207,6 +233,12 @@ class ComicGuide{
         cNode.node.style.top="0px"
         return cNode;
     }
+
+    setTag(tag=null){
+        this.addingTag=tag;
+        return this;
+    }
+
 
     //add animation to style
     setAnimation(name,value="{}"){
