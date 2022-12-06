@@ -1,0 +1,47 @@
+class ComicGuide.manager
+
+FUNCTIONS
+-------------
+constructor(ComicCanvas)
+Takes a comic canvas and builds on it
+
+setPage(pageJsonSetup,useExceptions=false)
+Takes a JSON formatted page and add it to the comic
+useExceptions can be set to true to skip pageJsonSetup.exceptions array of tags if the objects has tag containing it
+
+pageJsonSetup={
+    exceptions:["xption1","xption2"],
+    layers:[//array of layers
+        [{          //array of elements
+            "node":"filename" ** if null, layer will be affected
+            "class":["classes","animations"]
+            "children":[elements]
+            "properties":{}           //example:{innerHTML:"hello"}
+
+            "tag": extra tag for this node
+        }]
+    ]
+}
+
+clearPage(tag="*page",exceptions=null)
+remove all nodes with tag. If tag starts with *, it will remove ones containing the tag even if not equal to it
+exceptions, array of tags. If node tag name contains any of the exceptions, it will not be removed
+
+newPage(pageJsonSetup,useExceptions=false)
+cleares *page and use exceptions in the pageJsonSetup.exceptions to exclude nodes
+
+addNode(filename,parent)
+uses comic.add to add filename element. See canvas add function
+
+load(jsonComic)
+loads a comic from json data. See below:
+    jsonComic={
+        folder:"./",// folder containing images
+        images:[],// array of images
+        pages:[],// all pages. See setPage for page object
+        css:{
+            animations:[[name:string,value:string of css]] see canvas setAnimation
+            styles:[[name:string,value:string of css,parentCss]] see canvas setStyle
+
+        }
+    }

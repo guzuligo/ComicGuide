@@ -2,7 +2,9 @@
 class ComicManager{
     constructor(ComicCanvas){
         this.comic=ComicCanvas;
+        this.jsonComic={};
         this._basicSetup();
+        this.pageNumber=-1;
     }
 
     _basicSetup(){
@@ -12,11 +14,57 @@ class ComicManager{
         this.page=c.add(".div",this.pageContainer);
         this.interface=c.add(".div");
         c.addingTag=oldTag;
+        return this;
+    }
+
+    /*
+    jsonComic={
+        folder:"./",// folder containing images
+        images:[],// array of images
+        pages:[],// all pages. See setPage for page object
+        css:{
+            animations:[[name:string,value:string of css]] see canvas setAnimation
+            styles:[[name:string,value:string of css,parentCss]] see canvas setStyle
+
+        }
+    }
+    */
+    load(jsonComic){
+        this.pageNumber=0;
+        
+        var c=this.comic.clearCachedImages().clearPage().deleteCss(true);
+        this._basicSetup();
+
+        var t;
+        this.jsonComic=jsonComic;
+        this.comic.cacheImages(jsonComic.images,jsonComic.folder||"./");
+
+        t=jsonComic.css.styles;
+        for (var i in t)
+            c.setStyle(t[i][0],t[i][1],t[i][2]);
+        t=jsonComic.css.animations;
+        for (var i in t)
+            c.setAnimation(t[i][0],t[i][1]);
+        
+        return this;
+    }
+
+    //return true if successfully went to next page
+    gotoPage(pageNumber){
+        if (pageNumber>=this.jsonComic.pages.length || pageNumber<0)
+            return false;
+        //console.log("page: ",this.jsonComic.pages[pageNumber]  )
+        this.newPage(   
+            this.jsonComic.pages[pageNumber],
+            pageNumber==this.pageNumber+1
+        );
+        this.pageNumber=pageNumber;
+        return true;
     }
 
 
     /* for page, following json format is used
-    pageJsonSetup{
+    >>  pageJsonSetup{
         exceptions:["x1","x2","x3"],
 
         layers:[
@@ -133,9 +181,10 @@ class ComicManager{
         return cNode;
     }
 
-    gotoPage(pageNumber){
 
-    }
+
+
+ 
 
     
 

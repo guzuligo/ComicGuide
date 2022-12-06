@@ -1,4 +1,4 @@
-class ComicGuideCanvas
+class ComicGuide.canvas
 
 FUNCTIONS
 -------------
@@ -43,6 +43,10 @@ comicMainDivChildrenOnly will make the style only applies if element is added to
 example:
 comic.setStyle(".blur","filter:blur(66px);")
 comic.added[2].addClasses("blur")
+
+deleteCss(useRefresh=true)
+delete all animations and styles from css
+if useRefresh is true, it will directly activate
 
 --todo removeStyle from nodes
 

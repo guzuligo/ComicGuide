@@ -4,7 +4,7 @@
 //this.margin to add a margin to resizing
 
 (window.ComicGuide=window.ComicGuide||{}).canvas =
-class ComicGuide{
+class ComicCanvas{
     constructor(div,width=740,height=360,maxScale=1,styleTag=""){
         this.node=div;
         this.document=div.getRootNode(); 
@@ -203,7 +203,7 @@ class ComicGuide{
     //tag string removes =tag
     //tag *string removes containing string
     clearPage(tag=null,exceptionsTag=null){
-        console.log(exceptionsTag)
+        //console.log(exceptionsTag)
         for (var i in this.added){
             var t=this.added[i].tag;
             if(tag == null || (tag[0]!="*"?(t==tag):t.indexOf(tag.substr(1))>-1))
@@ -326,6 +326,15 @@ class ComicGuide{
         return this;
     }
 
+    //delete all styles and animations
+    deleteCss(useRefresh=true){
+        this.styles={};
+        this.animations={};
+        if(this.useRefresh)
+            this._refreshStyles()
+        return this;
+    }
+
     _refreshStyles(){
         this._cssStyles.innerHTML="";
         var a;
@@ -341,7 +350,7 @@ class ComicGuide{
 
     _initDefaultStyles(){
         //textarea should be clear text
-        this.setStyle("textarea","resize: none;border:none; pointer-events: none;background:transparent",true);
+        //this.setStyle("textarea","resize: none;border:none; pointer-events: none;background:transparent",true);
 
 
         return this;
