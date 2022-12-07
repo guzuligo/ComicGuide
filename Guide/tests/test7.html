@@ -2,9 +2,13 @@
 <html><head>
 <script src="../ComicGuideCanvas.js"></script>
 <script src="../ComicGuideManager.js"></script>
+<script src="../ComicGuideInterface.js"></script>
 <script>
+    
     var comic,manager;
-    var page1={
+    var pages=
+    [
+        {
             exceptions:["xyz"],
             layers:[
                 [//layer elements
@@ -15,11 +19,21 @@
                         children:[
                             {
                                 node:"ooo.jpg",
+                                class:["","blur 1s 0s reverse,blur 1s ease-out"]
                             },
                             {
                                 tag:"removable",
                                 node:".button",
-                                properties:{innerHTML:"hello",name:"btn"}
+                                properties:{
+                                    innerHTML:"hello",name:"btn",
+                                    style:"left:10px"
+                                },
+                                timeline:{
+                                    //10:[function(){console.log("TIMELINE!!",this)},
+                                    //    function(){console.log("22222!!!")}
+                                    //],
+                                    //30:function(){console.log("30?")}
+                                }
                             }
                         ]
                         
@@ -30,22 +44,65 @@
                     }
                 ]
             ]
-        };
+        }
+
+        ,
+
+        {
+            //exceptions:["xyz"],
+            layers:[
+                [//layer elements
+                    {
+                        tag:"xyz",
+                        node:".div",
+                        class:["","tester3a 1s 1 steps(7) 0s forwards,2s linear,tester3b 1s"],
+                        children:[
+                            {
+                                node:"tttt.jpg",
+                                class:["","blur 1s 0s reverse,blur 1s ease-out"],
+                                
+                            },
+                            {
+                                tag:"removable",
+                                node:".button",
+                                properties:{
+                                    innerHTML:"hello",name:"btn",
+                                    
+                                }
+                            }
+                        ]
+                        
+                    },{
+                        node:null,
+                        tag:"xyz",
+                        properties:{name:"keep"}
+                    },
+                    {
+                        node:"chop2music.mp3",
+                        
+                    }
+                ]
+            ]
+        }
+    
+    ];
     
     //
     var setup={
         folder:"./",
-        images:["ooo.jpg","tttt.jpg","tttt.png"],
-        pages:[page1],
+        images:["ooo.jpg","ttttx.jpg","tttt.png","fff.jpg","chop2music2.mp3"],
+        pages:pages,
         css:{
             animations:[
                 ["tester3a","0% {top:-512px;left:0px;}\n 100% {top:-256px;left:256px}"],
                 ["tester3b","0% {top:-256px;left:256px}\n 100% {top:0px;left:0px}\n"],
                 ["tester2","0% {top:-512px;left:0px;}\n 50% {top:-256px;left:256px}\n 100% {top:0px;left:0px}\n"],
                 ["tester","from {left:0px;}\n to {left:512px;}\n"],
+                ["blur","0% {filter:blur(30px);} 100% {filter:blur(1px);}"],
             ],
             styles:[
                 ["textarea","resize: none;border:none; pointer-events: none;background:transparent",true],
+
             ]
 
 
@@ -58,39 +115,15 @@
 
         comic=new ComicGuide.canvas(comic);
         manager=new ComicGuide.manager(comic);
-
+        interface=new ComicGuide.interface(manager);
 
         comic.margin[1]=22;//add margin at bottom
         comic.maxScale=2;
         comic.resize();//trigger fixing size
+        console.log("loaded page?",
+            manager.load(setup).goto(0)
+        );
 
-        comic.cacheImages(["ooo.jpg","tttt.jpg","tttt.png"],"../") ;
-        
-        comic.setStyle("textarea","resize: none;border:none; pointer-events: none;background:transparent",true)
-        comic.setAnimation("tester","from {left:0px;}\n to {left:512px;}\n")
-        comic.setAnimation("tester2","0% {top:-512px;left:0px;}\n 50% {top:-256px;left:256px}\n 100% {top:0px;left:0px}\n")
-
-        comic.setAnimation("tester3a","0% {top:-512px;left:0px;}\n 100% {top:-256px;left:256px}")
-        comic.setAnimation("tester3b","0% {top:-256px;left:256px}\n 100% {top:0px;left:0px}\n")
-        comic._refreshStyles()
-        
-        manager.newPage(page1)
-        //manager.load(setup).gotoPage(0)
-
-        //var d=comic.add(".div");
-        //var c=comic.add(".textarea");
-        //var a=d.add("ooo.jpg",d);
-        //var b=comic.add("tttt.png",d)
-        
-        //c.node.innerHTML="Hello"
-        //a.transform.scale=0.5
-
-        
-
-        //a.animatex("tester3a 1s linear forwards,tester3b 1s 2.5s ease-out forwards")
-
-        comic.setAnimation("text","0%{length:0} 100% {length:20} ")
-        //c.setText("Hello world").animate("text",3)
     }
 
     function gofull(){

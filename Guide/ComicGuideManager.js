@@ -1,7 +1,7 @@
 (window.ComicGuide=window.ComicGuide||{}).manager =
 class ComicManager{
     constructor(ComicCanvas){
-        
+                
         this.comic=ComicCanvas;
         this.comic.manager=this;
 
@@ -229,7 +229,7 @@ class ComicManager{
             for (i in elementConf.children)
                 this.addNode(elementConf.children[i],cNode);
 
-        if (elementConf.timeline){
+        if (elementConf.timeline && this.comic.allowActions){
              e=elementConf.timeline;
             for ( i in e){
                 console.log(">>",i)

@@ -23,10 +23,10 @@ class ComicCanvas{
         this.events=[];
         this.addingTag="";//current tagging for any added element
         this.manager=null;//ComicGuide manager
+
         this._autoRefresh=true;//trigger refresh events instead of waiting for a call
-
         this.folder="./";//last folder used
-
+        this.allowActions=true;//allow animations and functions
 
         //Keep size consistant
         //window.addEventListener("resize",()=>{this.resize.call(this);});
@@ -174,33 +174,60 @@ class ComicCanvas{
     }
 
 
+    _cacheHelper_extensionType(filename){
+        var ex=filename.substr(1+filename.indexOf("."));
+        //console.log("Extension:",ex)
+        if (" mp3 wav".indexOf(ex)>-1){
+            return "audio";
+        }
+        if (" gif jpg jpeg png".indexOf(ex)>-1)
+            return "image";
+    }
+    _cacheHelper_fileType(filename){
+        //console.log("FILE",filename)
+        var ex=this._cacheHelper_extensionType(filename);
+        //console.log("Extension:",ex)
+        if (ex=="audio"){
+            var a=new Audio();
+            return a;
+        }
+        if (ex=="image")
+            return new Image();
+        console.warn("File Not Supported", filename)
+    }
     cacheImages(filenames=[],folder="./"){
-        this.image={};
+        console.log("Caching Images")
+        //this.image={};
         this.folder=folder=folder.trim();
         if (folder[folder.length-1]!="/")
             folder=folder+"/"
+        var ttt=1
         for (var i in filenames){
+            
             //don't cache file with same name
             if (this.image[filenames[i]])
                 continue;
             //create image node and cache it
-            var m=new Image();
+
+            var m=this._cacheHelper_fileType(filenames[i]);
             if(true){
                 /*
                 TODO: caching mechanizim to progressively cache and reload on error
                 Nice trick to use: https://instructobit.com/tutorial/119/Force-an-image-to-reload-and-refresh-using-Javascript
                 */
+               ttt++;
                 m.onload=(e)=>{
-                    //console.log("loaded",m.src)
-                    m.error=m.onload=null;
+                    console.log("loaded",m.src,"ttt",ttt,e)
+                    //m.onerror=m.onload=m.onloadend=null;
                 }
                 m.onerror=(e)=>{
-                    console.warn("error loading",m.src)
-                    m.error=m.onload=null;
+                    console.warn("error loading",m.src,"ttt",ttt)
+                    m.onerror=m.onload=null;
                 }
             }
             m.src=folder+filenames[i];//TODO: on load
             //m.className="ComicNoMove"+this.styleTag;
+            //console.log("Work?",filenames[i],m)
             this.image[filenames[i]]=m;
         }
         return this;
@@ -247,8 +274,10 @@ class ComicCanvas{
     }
 
     getImage(filename){
-        if (!this.image[filename])
-            this.cacheImages(filename,this.folder)
+        if (!this.image[filename]){
+            console.log("???",this.image[filename],filename)
+            this.cacheImages([filename],this.folder)
+        }
         return this.image[filename];
     }
 
@@ -263,7 +292,10 @@ class ComicCanvas{
                 return null;
             }
             img=this.getImage(filename).cloneNode();
-        }else{
+            if (this._cacheHelper_extensionType(filename)=="audio")
+                img.autoplay=true;
+            
+        }else{//create an object if first is dot
             filename=filename.substr(1);
             img=this.document.createElement(filename);
         }
@@ -440,6 +472,8 @@ class ComicCanvas{
                 animate:
                     //repeat can be replaced by i for infinite or more settings
                     function(name,time=1,repeat=1){
+                        if (!this.comic.allowActions)return this;
+
                         //i for infinity
                         if (isNaN(repeat)){
                             if (repeat.toLowerCase()=="i")
@@ -462,6 +496,8 @@ class ComicCanvas{
                 //example comic.added[0].animatex("tester3a 1s linear ,tester3b 1s 1s ease-out forwards")
                 ,animatex:
                     function(conf){
+                        if (!this.comic.allowActions)return this;
+
                         var a=this.node;
                         a.style.animation="none";a.offsetWidth;//force animation
                         a.style.animation=conf;
