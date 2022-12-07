@@ -177,10 +177,10 @@ class ComicCanvas{
     _cacheHelper_extensionType(filename){
         var ex=filename.substr(1+filename.indexOf("."));
         //console.log("Extension:",ex)
-        if (" mp3 wav".indexOf(ex)>-1){
+        if (" mp3 wav ogg".indexOf(ex)>-1){
             return "audio";
         }
-        if (" gif jpg jpeg png".indexOf(ex)>-1)
+        if (" gif jpg jpeg png apng avif webp".indexOf(ex)>-1)
             return "image";
     }
     _cacheHelper_fileType(filename){
