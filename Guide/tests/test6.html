@@ -28,7 +28,10 @@
                                     style:"left:10px"
                                 },
                                 timeline:{
-                                    10:function(){console.log("TIMELINE!!",this)}
+                                    10:[function(){console.log("TIMELINE!!",this)},
+                                        function(){console.log("22222!!!")}
+                                    ],
+                                    30:function(){console.log("30?")}
                                 }
                             }
                         ]
@@ -54,7 +57,7 @@
                         class:["","tester3a 1s 1 steps(7) 0s forwards,2s linear,tester3b 1s"],
                         children:[
                             {
-                                node:"tttt.jpg",
+                                node:"fff.jpg",
                                 class:["","blur 1s 0s reverse,blur 1s ease-out"],
                                 
                             },
@@ -72,6 +75,22 @@
                         node:null,
                         tag:"xyz",
                         properties:{name:"keep"}
+                    },
+                    {
+                        node:".audio",
+                        properties:{
+                            src:"chop2music.mp3",
+                            controls:true,
+                            autoplay:true,
+                            volume:.5,
+                        },
+                        timeline:{
+                            2:function(){
+                                console.log("PLAY",this);
+                                //this.node.play();
+                            }
+                        }
+                        
                     }
                 ]
             ]
@@ -82,7 +101,7 @@
     //
     var setup={
         folder:"./",
-        images:["ooo.jpg","tttt.jpg","tttt.png"],
+        images:["ooo.jpg","tttt.jpg","tttt.png","fff.jpg"],
         pages:pages,
         css:{
             animations:[

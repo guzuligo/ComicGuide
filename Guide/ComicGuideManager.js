@@ -32,10 +32,10 @@ class ComicManager{
         if (this.time>0 && this.timeline[this.time]){
             var t=this.timeline[this.time];
             //execute functions
-            console.log("yo?",t)
-            for (var i in t){
-                console.log("yaa",t[i])
-                t[i]();
+            //console.log("yo?",t)
+            for (var i in t){//switch(t[i].length){
+                //console.log("yaa",t[i])
+                t[i].fn();
             }
         }
         window.setTimeout(()=>this.nextTick(),this.timelineTick);
@@ -189,6 +189,8 @@ class ComicManager{
     clearPage(tag="*page",exceptions=null){
         //remove page and add new blank one
         this.comic.clearPage(tag,exceptions);
+        this.time=0;
+        this.timeline={};
         //this.page.remove();
         //this.page=this.comic.add(".div",this.pageContainer);
         return this;
@@ -233,9 +235,22 @@ class ComicManager{
                 console.log(">>",i)
                 if (!this.timeline[i])
                     this.timeline[i]=[];
-                this.timeline[i].push(
-                    ()=>{console.log("exe",e[i]);e[i].call(cNode);}
-                );
+                {
+                    var _z=e[i];
+                    console.log(_z)
+                    this.timeline[i].push({
+                            fn:function(){
+                                //console.log("exe",this.f);
+                                if(!Array.isArray(this.f))
+                                    this.f.call(this.cNode)
+                                else for (var i in this.f)
+                                    this.f[i].call(this.cNode)
+                            },
+                            cNode:cNode,
+                            f:e[i]
+                        }
+                    );
+                }    
             }
         }
         return cNode;

@@ -25,6 +25,7 @@ class ComicCanvas{
         this.manager=null;//ComicGuide manager
         this._autoRefresh=true;//trigger refresh events instead of waiting for a call
 
+        this.folder="./";//last folder used
 
 
         //Keep size consistant
@@ -175,7 +176,7 @@ class ComicCanvas{
 
     cacheImages(filenames=[],folder="./"){
         this.image={};
-        folder=folder.trim();
+        this.folder=folder=folder.trim();
         if (folder[folder.length-1]!="/")
             folder=folder+"/"
         for (var i in filenames){
@@ -184,6 +185,20 @@ class ComicCanvas{
                 continue;
             //create image node and cache it
             var m=new Image();
+            if(true){
+                /*
+                TODO: caching mechanizim to progressively cache and reload on error
+                Nice trick to use: https://instructobit.com/tutorial/119/Force-an-image-to-reload-and-refresh-using-Javascript
+                */
+                m.onload=(e)=>{
+                    //console.log("loaded",m.src)
+                    m.error=m.onload=null;
+                }
+                m.onerror=(e)=>{
+                    console.warn("error loading",m.src)
+                    m.error=m.onload=null;
+                }
+            }
             m.src=folder+filenames[i];//TODO: on load
             //m.className="ComicNoMove"+this.styleTag;
             this.image[filenames[i]]=m;
@@ -232,6 +247,8 @@ class ComicCanvas{
     }
 
     getImage(filename){
+        if (!this.image[filename])
+            this.cacheImages(filename,this.folder)
         return this.image[filename];
     }
 
@@ -241,11 +258,11 @@ class ComicCanvas{
         var img;
 
         if (filename[0]!="."){
-            if (!this.image[filename]){
+            if (!this.getImage(filename)){
                 console.warn("File %c\""+filename+"\"%cdoes not exists in the cache",'background:#002222');
                 return null;
             }
-            img=this.image[filename].cloneNode();
+            img=this.getImage(filename).cloneNode();
         }else{
             filename=filename.substr(1);
             img=this.document.createElement(filename);
