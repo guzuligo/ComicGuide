@@ -87,7 +87,9 @@
             ]
         }
     
+        
     ];
+    for (var q=0;q<5;q++)pages.push({layers:[{node:".div"}]})
     
     //
     var setup={
@@ -115,7 +117,7 @@
 
         comic=document.getElementById("comic");
 
-        comic=new ComicGuide.canvas(comic);
+        comic=new ComicGuide.canvas(comic,740,360);
         manager=new ComicGuide.manager(comic);
         interface=new ComicGuide.interface(manager);
 

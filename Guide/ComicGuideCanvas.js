@@ -103,7 +103,7 @@ class ComicCanvas{
         r.getElementsByTagName('head')[0].appendChild(st);
         this.mainStyle=st;
 
-        this.node.className="ComicMainDiv"+tag+" ComicNoSelect"+tag;
+        this.node.className="ComicMainDiv"+tag;//+" ComicNoSelect"+tag;
         this.node.parentElement.className="ComicSuperDiv"+tag;
         this.node.parentElement.parentElement.className="Comic0Margin"+tag;
 
@@ -168,6 +168,31 @@ class ComicCanvas{
         div.style.transform="scale("+(s*100)+"%)";
         spr.style.width=(s*w)+"px";
         spr.style.height=(s*h)+"px";
+        //console.log("Resize to spr " + r.right+", div " + spr.clientWidth)
+        //console.log(b)
+        return this;
+    }
+
+    resize_testVersion(){
+        var w=this.width;
+        var h=this.height;console.log(this,"oo",h)
+        var spr=this.node.parentElement;
+        var div=this.node;
+        var r= spr.getBoundingClientRect()
+        var pp=this.body;//spr.parentElement.parentElement;
+        var b=[pp.clientWidth-this.margin[0],pp.clientHeight-this.margin[1]];console.log(b)
+        if (b[0]-w<b[1]-h){
+            b=[w,b[0]]
+        }
+        else{
+            b=[h,b[1]]
+        }
+        var s=Math.min(b[0]*this.maxScale,b[1]) /b[0];
+        
+        div.style.transform="scale("+(s*100)+"%)";
+        spr.style.width=w+"px";//(s*w)+"px";
+        spr.style.height=h+"px";//(s*h)+"px";
+        
         //console.log("Resize to spr " + r.right+", div " + spr.clientWidth)
         //console.log(b)
         return this;
@@ -356,7 +381,7 @@ class ComicCanvas{
 
     setStyle(name,value={},comicMainDivChildrenOnly=false){
         this.styles[
-            (comicMainDivChildrenOnly?".ComicMainDiv"+this.styleTag+" > ":"")+
+            (comicMainDivChildrenOnly?".ComicMainDiv"+this.styleTag+" ":"")+
             name+this.styleTag]
             
             =value;
@@ -519,7 +544,7 @@ class ComicCanvas{
                 removeClasses:
                     function(classNames){
                         if (typeof(classNames)=="string")
-                            classNames=classNames.split(" ")
+                            classNames=classNames.trim().split(" ")
                         for (var i in classNames)
                             if (this.classNames.indexOf(classNames[i])!=-1){
                                 var s=classNames[i];

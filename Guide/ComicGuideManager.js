@@ -70,11 +70,14 @@ class ComicManager{
         
         var c=this.comic.clearCachedImages().clearPage().deleteCss(true);
         this._basicSetup();
+        
+
+        var t;
+        
+        this.jsonComic=jsonComic;
         if (this.interface)
             this.interface.reset();
 
-        var t;
-        this.jsonComic=jsonComic;
         this.comic.cacheImages(jsonComic.images,jsonComic.folder||"./");
         
         t=jsonComic.css.styles;
