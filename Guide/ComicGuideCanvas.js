@@ -123,7 +123,7 @@ class ComicCanvas{
     }
 
     //useful to reset style by using this.mainStyle
-    _makeMainStyle(){
+    _makeMainStyle(doAssignment=false){
         var tag=this.styleTag;
         var s=".ComicMainDiv"+tag+"{\n\ttransform-origin: top left;left:0px;top:0px;overflow:hidden;\n"
         +"margin-right: auto;margin-left: 0px;\n"//+"position:static;\n"
@@ -146,6 +146,9 @@ class ComicCanvas{
           +"}\n";
 
         s+=".cNodeDefault"+tag+"{\n\tposition:absolute;left:0px;top:0px\n}\n";
+
+        if (doAssignment)
+            this.mainStyle.innerHTML=s;
         return s;
     }
 

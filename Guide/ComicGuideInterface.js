@@ -25,7 +25,7 @@ class ComicInterface{
         this._initInterface();
     }
 
-    _getStyleFormat(){
+    _getStyleFormat(resetStyle=false){
         var c_bg="#777788"
         var c=".ComicMainDiv"+this.manager.comic.styleTag+" ";
         var h=this.manager.comic.height;
@@ -62,6 +62,8 @@ class ComicInterface{
             +"left:"+(p*0.3)+"px;top:"+(p*0.3)+"px;position:relative;"
             +"width:"+(p*1.3)+"px;height:"+(p*0.65)+"px;}"
 
+        if (resetStyle)this._style.innerHTML=t;
+        
         return t;
     }
 
@@ -134,9 +136,9 @@ class ComicInterface{
                 this.hidden=!this.hidden;
             }
             else
-                if (e.layerX/this.manager.comic.width>=.5)
+                if (e.layerX/this.manager.comic.width>=.7)
                     this.manager.next();
-                else
+                if (e.layerX/this.manager.comic.width<=.3)
                     this.manager.prev();
         }else
             if(!h){

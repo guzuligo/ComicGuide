@@ -29,7 +29,7 @@ class ComicManager{
 
     nextTick(){
         //Do we have actions to execute?
-        if (this.time>0 && this.timeline[this.time]){
+        if (this.time>-1 && this.timeline[this.time]){
             var t=this.timeline[this.time];
             //execute functions
             //console.log("yo?",t)
@@ -73,7 +73,7 @@ class ComicManager{
         
 
         var t;
-        
+
         this.jsonComic=jsonComic;
         if (this.interface)
             this.interface.reset();
@@ -173,7 +173,7 @@ class ComicManager{
             }//end skip layer
 
             var l=this.comic.add(".div",this.page);
-            
+            l.node.style.zIndex=_layerNumber;
 
             for (var e in L){
                 e=L[e];
