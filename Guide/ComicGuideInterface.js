@@ -115,11 +115,11 @@ class ComicInterface{
         ss.oninput();
 
         
-        window.ss=ss;//DEBUG
+        //window.ss=ss;//DEBUG
 
         //add style
         
-        ii.node.id="test"
+        //ii.node.id="test"
     }
 
     _onclick(e){window.eee=e;

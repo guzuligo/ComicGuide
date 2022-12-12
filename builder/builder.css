@@ -1,0 +1,12 @@
+.resizable{
+    resize: both;
+    overflow: auto;
+}
+.floater {
+    float: left;
+}
+.floater *{
+    float: left;
+    width:48px;
+    height:36px;
+}

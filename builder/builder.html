@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html><head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="builder.css" rel="stylesheet">
 <script src="../Guide/ComicGuideCanvas.js"></script>
 <script src="../Guide/ComicGuideManager.js"></script>
 <script src="../Guide/ComicGuideInterface.js"></script>
@@ -8,39 +9,43 @@
 <script>
     var builder;
     function body(){
-        //comic=document.getElementById("frame");
-        //comic.remove();
-        //document.getElementById("xcomic").appendChild(comic)
-      
-
+        
         builder=new ComicGuide.builder()
         builder.config.container="container"
         builder.init();
         
-        /*
-        comic=document.getElementById("comic");
-        comic=new ComicGuide.canvas(comic,740,360);
-        manager=new ComicGuide.manager(comic);
-        interface=new ComicGuide.interface(manager);
-
-        comic.body=document.getElementById("frame");
-
-        manager.load(setup);
-        */
+        
     }
 </script>
 
 </head>
 
 <body onload="body()" bgcolor="#333344">
-<div id="container"
+<div id="container" class="resizable"
 style="width: 740px; height: 360px; float:left; "><!--background-color: cadetblue;-->
 
+    <!--Main Frame-->
     <div id="frame" style="width: 100%; height:100%">
         <div><div id="comic"></div></div></div>
     </div>
 
-    <div style="float: left;"><textarea style="background-color: #555566;"></textarea></div>
+    <!--Config Frame-->
+    <div style="float: left;">
+        <div id="configure" class="resizable" 
+            style="width:740px;height:50px;background-color: #555566;">   
+        </div>
+    </div>
+    <!--Objects Frame-->
+    <div style="float: left;">
+        <div id="objects" class="resizable" 
+            style="width:740px;height:50px;background-color: #555566;">   
+            <select id="tester">
+                <option>test1</option>
+                <option>test2</option>
+                <option>test3</option>
+            </select>
+        </div>
+    </div>
 </body>
 
 
