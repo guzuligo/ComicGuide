@@ -1,7 +1,13 @@
 (window.ComicGuide=window.ComicGuide||{}).manager =
 class ComicManager{
+    setVerbose(level=3){
+        this.log=level?console.log:(...x)=>{}
+        this.log2=level>1?console.log:(...x)=>{}
+        this.log3=level>2?console.log:(...x)=>{}
+    }
     constructor(ComicCanvas){
-                
+        this.setVerbose()     
+        this.log           
         this.comic=ComicCanvas;
         this.comic.manager=this;
 
@@ -29,7 +35,7 @@ class ComicManager{
 
     nextTick(){
         //Do we have actions to execute?
-        if (this.time>-1 && this.timeline[this.time]){
+        if (this.time>-1 && this.timeline[this.time] && this.comic.allowActions){
             var t=this.timeline[this.time];
             //execute functions
             //console.log("yo?",t)
@@ -39,7 +45,7 @@ class ComicManager{
             }
         }
         window.setTimeout(()=>this.nextTick(),this.timelineTick);
-        if(this.time<this.timelimit)
+        if(this.time<this.timelimit && this.comic.allowActions)
             this.time++;
     }
 
@@ -94,7 +100,7 @@ class ComicManager{
     goto(pageNumber){
         if (pageNumber>=this.jsonComic.pages.length || pageNumber<0)
             return false;
-        //console.log("page: ",this.jsonComic.pages[pageNumber]  )
+        this.log3("page: ",this.jsonComic.pages[pageNumber]  )
         this.newPage(   
             this.jsonComic.pages[pageNumber],
             pageNumber==this.pageNumber+1
@@ -126,6 +132,7 @@ class ComicManager{
                         "node":"filename" ** if null, layer will be affected
                         "class":["classes","animations"]
                         "children":[elements]
+                        "parent":#  only a reference for the builder for rearranging
                         "properties":{}           //example:{innerHTML:"hello"}
 
                         //if layer:
@@ -150,7 +157,7 @@ class ComicManager{
                 var x=false;
                 var xx=pageJsonSetup.exceptions;
 
-                if(!L.tag)console.log(L)
+                if(!L.tag)this.log3("No tag on layer",L)
 
                 var cNodeL;
                 for (i in L)
@@ -235,12 +242,12 @@ class ComicManager{
         if (elementConf.timeline && this.comic.allowActions){
              e=elementConf.timeline;
             for ( i in e){
-                console.log(">>",i)
+                this.log2(">>",i,"\tTimeline added for",elementConf.node)
                 if (!this.timeline[i])
                     this.timeline[i]=[];
                 {
                     var _z=e[i];
-                    console.log(_z)
+                    console.log3("Timeline Function:",_z)
                     this.timeline[i].push({
                             fn:function(){
                                 //console.log("exe",this.f);
@@ -258,6 +265,8 @@ class ComicManager{
         }
         return cNode;
     }
+
+    
 
 
 

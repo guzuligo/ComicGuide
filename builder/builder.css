@@ -4,9 +4,12 @@
 }
 .floater {
     float: left;
+    height:48px;
 }
-.floater *{
+.floater > *:not(div){
     float: left;
     width:48px;
-    height:36px;
+    padding-bottom:0px;
+    height: 100%;padding-top: 0px;
+    vertical-align: middle;
 }
