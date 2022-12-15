@@ -4,7 +4,7 @@
 }
 .floater {
     float: left;
-    height:48px;
+    heightz:48px;
 }
 .floater > *:not(div){
     float: left;

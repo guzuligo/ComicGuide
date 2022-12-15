@@ -8,6 +8,7 @@ class ComicBuilder{
             interface:null,
             frame:null,
             container:null,
+            ui:{},
         };
         
         this.config={
@@ -16,7 +17,7 @@ class ComicBuilder{
             container:"",
             width:740,
             height:360,
-            ui:{},
+            
 
             setup:{
                 folder:"./",
@@ -28,6 +29,7 @@ class ComicBuilder{
         this._createDefaultButtons();
         
     }
+
 
     init(force_use_config=false){
         
@@ -75,11 +77,61 @@ class ComicBuilder{
         //TODO: probably needed config as well
         this.resize(this.config.width,this.config.height);
         var a=this.comic.manager.load(this.config.setup);
-        if (gotoPage0>-1)
-            a.goto(gotoPage);
+        if (gotoPage>-1){
+            var i=this.comic.interface.input.node;
+            i.value=gotoPage;
+            i.oninput();i.onchange();
+
+        }
         return this;
     }
 
+    _populateObject(){
+        var ui=this.comic.ui
+        //this.comic.ui[""]
+        var p=Number(ui["page"][2].value);
+        var l=Number(ui["layer"][2].value);
+        var o=Number(ui["object"][2].value);
+        //
+        //console.log(p,l,o)
+        try{
+            o=this.config.setup.pages[p].layers[l][o];
+        }catch(_err){
+            o={};
+        }
+        //
+        if (Object.keys(o).length==0){
+            ui["file"].value="";
+            ui["parent"][2].value=0;
+            ui["type"].selectedIndex=0
+            return this;
+        }
+
+
+        ui["file"].value=o.node.charAt(0)=="."?"":o.node;
+        ui["parent"][2].value=o.parent;
+
+        ui["type"].selectedIndex=(()=>{
+            var name="";
+            if(o.node==".div")
+                name="Group"
+            else
+                name="File"
+            var to=this._optionToNumber(ui["type"],name);
+            console.log(to)
+            return  to;
+        })();
+            
+        return this;
+    }
+
+    _optionToNumber(options,name){
+
+        for (var i=0;i<options.children.length;i++)
+            if(options.children[i].innerHTML==name)
+                return i;
+        return -1;
+    }
     _createInput(config){
         var c,div,input,i,b=[];
         c=this._getElement(config.parent||"configure");
@@ -100,7 +152,7 @@ class ComicBuilder{
             input.style=style;
         
         input.onchange=config.onchange||((e)=>console.log("Selection Changed:",input.value));
-        this.config.ui[config.name.toLowerCase()]=input;
+        this.comic.ui[config.name.toLowerCase()]=input;
     }
     _createSelection(config={}){
         var c,div,select,i,b=[],style="";
@@ -124,7 +176,7 @@ class ComicBuilder{
         for (i=I;i<I+config.options.length;i++){
             select.appendChild(b[i]=document.createElement("option"))
             
-            b[i].innerHTML=config.options[i];
+            b[i].innerHTML=config.options[i-I];
         }
         if(config.id)
             select.id=config.id
@@ -137,7 +189,7 @@ class ComicBuilder{
 
         select.style=style;
         select.onchange=config.onchange||((e)=>console.log("Selection Changed:",select.value));
-        this.config.ui[config.name.toLowerCase()]=select;
+        this.comic.ui[config.name.toLowerCase()]=select;
         return this;
     }
     _createButtons(config={}){
@@ -157,7 +209,7 @@ class ComicBuilder{
         b[2].onchange=()=>(config.onchange||console.log)(b);
         b[3].onclick=config.onleftclick  || ((e)=>{b[2].value--;b[2].onchange(b)})
         b[4].onclick=config.onrightclick || ((e)=>{b[2].value++;b[2].onchange(b)})
-        this.config.ui[b[1].innerHTML.toLowerCase()]=b;
+        this.comic.ui[b[1].innerHTML.toLowerCase()]=b;
         if(config.id)
             b[2].id=config.id
         return this;
@@ -176,7 +228,7 @@ class ComicBuilder{
             style+="height:"+config.height+";";
         if(config.style)
             style+=config.style;
-        style+="padding-bottom:115px;"
+        //style+="padding-bottom:115px;"
         div.style=style;
         return (returnDiv)?div:this;
     }
@@ -186,40 +238,51 @@ class ComicBuilder{
         else
             return id;
     }
+
+    _quickApplyObjectSettings(){
+        this.applyObjectSettings()
+        this.reset(this.comic.ui["page"][2].value)
+    }
+
+
     _createDefaultButtons(){
+        //page menu
         this._createButtons({
             name:"Page", parent:"configure",
             onchange:(b)=>{
                 //limit to page length
                 var v=Number(b[2].value||0);
                 b[2].value=v<0?0:Math.min(v,this.config.setup.pages.length);
+                this._populateObject().reset(b[2].value);
             }
         });
         this._createButtons({
             name:"Layer",parent:"configure",
             onchange:(b)=>{
                 var v=Number(b[2].value||0);
-                var p=Number(this.config.ui["page"].innerHTML)||0
+                var p=Number(this.comic.ui["page"].innerHTML)||0
                 //var x=this.config.setup.pages[p];
                 //x=x?x.layers.length:0
                 b[2].value=v<0?0:v;//Math.min(v,x);
+                this._populateObject();
             }
         });
         this._createButtons({
             name:"Object",parent:"configure",
             onchange:(b)=>{
                 var v=Number(b[2].value||0);
-                var p=Number(this.config.ui["page"].innerHTML)||0
-                var L=Number(this.config.ui["layer"].innerHTML)||0
+                var p=Number(this.comic.ui["page"].innerHTML)||0
+                var L=Number(this.comic.ui["layer"].innerHTML)||0
                 //var x=this.config.setup.pages[p];
                 //if(x)x=x.layers[L];
                 //x=x?x.length:0;
                 b[2].value=v<0?0:v;//Math.min(v,x);
+                this._populateObject();
             }
         });
 
 
-        //Top menu
+        //object menu
         this._createDiv({
             parent:"objects",
             id:"object main",
@@ -228,14 +291,16 @@ class ComicBuilder{
         });
         
         this._createSelection({
+            onchange:()=>this._quickApplyObjectSettings(),
             parent:"object main",
             name:"Type",
             id:"object_type",
             width:"98px",
-            options:["Deleted","Image","Sound","Group"]
+            options:["Deleted","File","Group"]
         });
 
         this._createInput({
+            onchange:()=>this._quickApplyObjectSettings(),
             parent:"object main",
             name:"File",width:"15ch"
         });
@@ -247,7 +312,7 @@ class ComicBuilder{
             }
         });
 
-        //low menu
+        //object setup menu
         this._createDiv({
             parent:"objects",
             id:"object setup",
@@ -256,16 +321,17 @@ class ComicBuilder{
 
         this._createSelection({
             parent:"object setup",
-            name:"Type",
+            name:"Styles",
             id:"object_type",
             width:"7em",size:6,
+            
             options:[]
         });
         return this;
     }
 
     applyObjectSettings(){
-        var ui=this.config.ui;
+        var ui=this.comic.ui;
         var choice=ui["type"].value.toLowerCase();
 
         //on delete, just make sure it does not exists
@@ -288,14 +354,15 @@ class ComicBuilder{
         
         obj.parent=Number(ui['parent'][2].value)
         switch(choice){
-            case 'image':
-            case 'audio':
+            case 'file':
+            //case 'audio':
                 obj.node=ui['file'].value.trim();
                 break;
             case 'group':
                 obj.node='.div'
                 break;
         }
+        return this;
     }
 
     _deleteObject(page,layer,index){
@@ -343,6 +410,25 @@ class ComicBuilder{
         
         return setup.pages[page].layers[layer][index];
 
+    }
+
+
+
+    saveConfig(){
+        var name_="comicConfig.json";
+        var file = new File([JSON.stringify(this.config)],name_, {
+            type: "text/plain",
+        });
+        var a=document.createElement("a");
+        a.href= URL.createObjectURL(file);
+        a.download = name_;
+        a.click();
+    }
+
+    loadConfig(data){
+        this.config= JSON.parse(data);
+        this.reset(0);
+        this._populateObject();
     }
 
 }

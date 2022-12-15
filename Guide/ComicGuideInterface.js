@@ -10,6 +10,7 @@ class ComicInterface{
         this.step=64;//(markers placement)
         this.length=100;
         this._style=null;//style html element
+        //this.ui={};
         //tmp
         //this._initInterface();
         

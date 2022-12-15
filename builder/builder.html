@@ -7,22 +7,56 @@
 <script src="../Guide/ComicGuideInterface.js"></script>
 <script src="ComicGuideBuilder.js"></script>
 <script>
+    function dd(d){return document.getElementById(d);}
+    function dv(d){return document.getElementById(d).value;}
     var builder;
     function body(){
         
         builder=new ComicGuide.builder()
         builder.config.container="container"
         builder.init();
-        
+    }
+
+    function resize(){
+        builder.resize(dv("width"),dv("height"));
+    }
+
+    function saveConfig(){
+        builder.saveConfig();
+    }
+
+    function loadConfig(){
+        dd("loadConfig").files[0].text().then((data)=>{;
+            builder.loadConfig(data);
+            fixInterface();
+            builder.reset(0);
+        });
+    }
+
+    function newFolder(){
+        builder.config.setup.folder=dv("folder")
+        builder.reset(0);
         
     }
+
+    function fixInterface(){
+        console.log("test")
+        dd("width").value=builder.config.width;
+        dd("height").value=builder.config.height;
+        dd("folder").value=builder.config.setup.folder;
+    }
+
+
 </script>
 
 </head>
 
 <body onload="body()" bgcolor="#333344">
+    
 <div id="container" class="resizable"
 style="width: 740px; height: 360px; float:left; "><!--background-color: cadetblue;-->
+
+    
 
     <!--Main Frame-->
     <div id="frame" style="width: 100%; height:100%">
@@ -31,6 +65,15 @@ style="width: 740px; height: 360px; float:left; "><!--background-color: cadetblu
 
     <!--Config Frame-->
     <div style="float: left;">
+        <div width="100%">
+            Folder:
+            <input id="folder" value="./" onchange="newFolder()">
+            <input value="740" style="width: 4ch;" id="width" onchange="resize()">X
+            <input value="360" style="width: 4ch;" id="height"onchange="resize()">
+            <button onclick="saveConfig()">SAVE</button>
+            <input type="file" id="loadConfig" onchange="loadConfig()">
+            
+        </div>
         <div id="configure" class="resizable" 
             style="width:740px;height:128px;background-color: #555566;">   
         </div>
@@ -38,7 +81,7 @@ style="width: 740px; height: 360px; float:left; "><!--background-color: cadetblu
     <!--Objects Frame-->
     <div style="float: left;">
         <div id="objects" class="resizable" 
-            style="width:740px;height:128px;background-color: #555566;">   
+            style="width:740px;background-color: #555566;">   
         </div>
         
         
