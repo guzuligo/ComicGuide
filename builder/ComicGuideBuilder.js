@@ -67,8 +67,8 @@ class ComicBuilder{
 
     resize (width=0,height=0){
         //BUG: height is not increasing properly
-        if(width)   this.comic.canvas.width=width
-        if(height)  this.comic.canvas.height=height
+        if(width)   this.comic.canvas.width=this.config.width=width
+        if(height)  this.comic.canvas.height=this.config.height=height
         this.comic.interface._getStyleFormat(true);
         this.comic.canvas.resize()._makeMainStyle(true);
     }
@@ -76,7 +76,7 @@ class ComicBuilder{
     reset(gotoPage=-1){
         //TODO: probably needed config as well
         this.resize(this.config.width,this.config.height);
-        var a=this.comic.manager.load(this.config.setup);
+        var a=this.comic.manager.load(this._reorder(this.config.setup));
         if (gotoPage>-1){
             var i=this.comic.interface.input.node;
             i.value=gotoPage;
@@ -85,7 +85,28 @@ class ComicBuilder{
         }
         return this;
     }
+    _reorder(obj){
+        //make a copy
+        obj=JSON.parse(JSON.stringify(obj));
+        var ip,il,i;
+        //fix children
+        for (ip=0;ip<obj.pages.length;ip++)
+         for (il=0;il<obj.pages[ip].layers.length;il++)
+          for (i=0;i<obj.pages[ip].layers[il].length;i++){
+            var l=obj.pages[ip].layers[il];
+            var o=l[i];
+            if (o.parent!=0 && l[o.parent]){
+                if(!l[o.parent].children)
+                    l[o.parent].children=[];
+                l[o.parent].children.push(o);
+                l[i]={};
+            }
 
+          }
+        
+        return obj;
+        
+    }
     _populateObject(){
         var ui=this.comic.ui
         //this.comic.ui[""]
@@ -93,9 +114,11 @@ class ComicBuilder{
         var l=Number(ui["layer"][2].value);
         var o=Number(ui["object"][2].value);
         //
-        //console.log(p,l,o)
+        console.log(p,l,o)
         try{
             o=this.config.setup.pages[p].layers[l][o];
+            if (!o)
+                o={};
         }catch(_err){
             o={};
         }
