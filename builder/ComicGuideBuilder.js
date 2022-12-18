@@ -88,6 +88,10 @@ class ComicBuilder{
     
     _populateObject(){
         var ui=this.comic.ui
+        //clean up
+        while (ui["styles list"].childNodes.length)
+            ui["styles list"].removeChild(ui["styles list"].childNodes[0]);
+
         //this.comic.ui[""]
         var p=Number(ui["page"][2].value);
         var l=Number(ui["layer"][2].value);
@@ -123,6 +127,21 @@ class ComicBuilder{
             console.log(to)
             return  to;
         })();
+
+
+        
+
+        if (o.class){
+            var c=o.class[0].trim().split(" ");
+            for (var i in c){
+                if (c[i]=="")continue;//BUG fix. Remove it to troubleshoot
+                var op=document.createElement("option");
+                op.innerHTML=c[i];
+                ui["styles list"].appendChild(op)
+            }
+        }
+            
+
             
         return this;
     }
@@ -134,6 +153,17 @@ class ComicBuilder{
                 return i;
         return -1;
     }
+
+    _createButton(config){
+        var c,btn,i,b=[];
+        c=this._getElement(config.parent||"configure");
+        c   .appendChild(btn    =document.createElement("button"));
+        btn.onclick=config.onclick||((e)=>console.log("Selection Changed:",btn.innerHTML));
+        
+        btn.innerHTML=config.name;
+        this.comic.ui[config.name.toLowerCase()]=btn;
+    }
+
     _createInput(config){
         var c,div,input,i,b=[];
         c=this._getElement(config.parent||"configure");
@@ -331,7 +361,7 @@ class ComicBuilder{
 
         this._createSelection({
             parent:"object setup",
-            name:"Styles",
+            name:"Styles List",
             id:"object_type",
             width:"7em",size:6,
             
@@ -354,6 +384,9 @@ class ComicBuilder{
             }
         });
 
+        
+
+
         this._createInput({
             name:"Style Name", parent:"styles",width:"15ch",
             onchange:(b)=>{
@@ -362,6 +395,32 @@ class ComicBuilder{
                 this._quickApplyObjectSettings();
             }
         });
+        this._createButton({
+            name:"➕", parent:"styles",
+            onclick:(b)=>{
+                var o=this._getObject();
+                if (!o)return;
+                if (!o.class)o.class=["",""];
+                o.class[0]+=" "+this.comic.ui["style name"].value;
+                o.class[0]=o.class[0].trim();
+                this._populateObject()
+            }
+        });
+        this._createButton({
+            name:"➖", parent:"styles",
+            onclick:(b)=>{
+                var o=this._getObject();
+                if (!o)return;
+                if (!o.class)return ;//o.class=["",""];
+                var a=o.class[0].split(" ");
+                a[this.comic.ui["styles list"].selectedIndex]="";
+                o.class[0]=a.join(" ").trim();
+                this._populateObject()
+            }
+        });
+
+
+
         this._createInput({
             name:"CSS Code", parent:"styles",multiline:true,
             size:[10,5],width:"30ch",
@@ -370,7 +429,9 @@ class ComicBuilder{
                 this.config.setup.css.styles[v][1]=this.comic.ui["css code"].value;
                 this._quickApplyObjectSettings()
             }
-        })
+        });
+
+        
 
         return this;
     }
@@ -438,6 +499,16 @@ class ComicBuilder{
     }
 
 
+    _getObject(page=null,layer=null,index=null){
+        if (!page)page=Number(this.comic.ui["page"][2].value);
+        if (!layer)layer=Number(this.comic.ui["layer"][2].value);
+        if (!index)index=Number(this.comic.ui["object"][2].value);
+        try{
+            return this.config.setup.pages[page].layers[layer][index]
+        }catch(e){
+            return null;
+        }
+    }
 
     _secureObject(page,layer,index){
         console.log (page,layer,index)
