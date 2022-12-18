@@ -65,7 +65,7 @@ style="width: 740px; height: 360px; float:left; "><!--background-color: cadetblu
 
     <!--Config Frame-->
     <div style="float: left;">
-        <div width="100%">
+        <div class="resizable" style="color:rgb(174, 189, 219);width: 340px;">
             Folder:
             <input id="folder" value="./" onchange="newFolder()">
             <input value="740" style="width: 4ch;" id="width" onchange="resize()">X
@@ -75,17 +75,24 @@ style="width: 740px; height: 360px; float:left; "><!--background-color: cadetblu
             
         </div>
         <div id="configure" class="resizable" 
-            style="width:740px;height:128px;background-color: #555566;">   
+            style="width:340px;height:128px;background-color: #555566;color:rgb(174, 189, 219)">   
         </div>
     </div>
     <!--Objects Frame-->
     <div style="float: left;">
         <div id="objects" class="resizable" 
-            style="width:740px;background-color: #555566;">   
+            style="width:400px;background-color: #555566;color:rgb(174, 189, 219)">   
         </div>
-        
-        
     </div>
+
+    <!--Style Frame-->
+    <div style="float: left;">
+        <div id="styles" class="resizable"
+        style="width:440px;background-color: #555566;">
+
+        </div>
+    </div>
+
 </body>
 
 

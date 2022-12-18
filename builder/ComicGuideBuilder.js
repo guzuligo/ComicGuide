@@ -76,7 +76,7 @@ class ComicBuilder{
     reset(gotoPage=-1){
         //TODO: probably needed config as well
         this.resize(this.config.width,this.config.height);
-        var a=this.comic.manager.load(this._reorder(this.config.setup));
+        var a=this.comic.manager.load(this.comic.manager._reorder(this.config.setup),true);
         if (gotoPage>-1){
             var i=this.comic.interface.input.node;
             i.value=gotoPage;
@@ -85,28 +85,7 @@ class ComicBuilder{
         }
         return this;
     }
-    _reorder(obj){
-        //make a copy
-        obj=JSON.parse(JSON.stringify(obj));
-        var ip,il,i;
-        //fix children
-        for (ip=0;ip<obj.pages.length;ip++)
-         for (il=0;il<obj.pages[ip].layers.length;il++)
-          for (i=0;i<obj.pages[ip].layers[il].length;i++){
-            var l=obj.pages[ip].layers[il];
-            var o=l[i];
-            if (o.parent!=0 && l[o.parent]){
-                if(!l[o.parent].children)
-                    l[o.parent].children=[];
-                l[o.parent].children.push(o);
-                l[i]={};
-            }
-
-          }
-        
-        return obj;
-        
-    }
+    
     _populateObject(){
         var ui=this.comic.ui
         //this.comic.ui[""]
@@ -163,7 +142,7 @@ class ComicBuilder{
         div.innerHTML="<div><div >"
         +config.name+":</div></div>  ";
         div.className="floater"
-        div .appendChild(input =document.createElement("input"));
+        div .appendChild(input =document.createElement(config.multiline?"textarea":"input"));
         input.className='floater'
         if(config.id)
             input.id=config.id
@@ -173,7 +152,15 @@ class ComicBuilder{
 
         if (style)
             input.style=style;
-        
+        if (config.size){
+            if (!isNaN(config.size))
+                config.size=[config.size,config.size];
+            if (config.size.length==1)
+                config.size=[config.size[0],config.size[0]];
+            input.cols=config.size[0];
+            input.rows=config.size[1];
+        }
+
         input.onchange=config.onchange||((e)=>console.log("Selection Changed:",input.value));
         this.comic.ui[config.name.toLowerCase()]=input;
     }
@@ -350,7 +337,50 @@ class ComicBuilder{
             
             options:[]
         });
+
+
+        //Style menu
+        this._createButtons({
+            name:"Styles", parent:"styles",
+            onchange:(b)=>{
+                var v=Number(b[2].value||0);
+                b[2].value=v=v<0?0:v;//Math.min(v,this.config.setup.pages.length);
+                if (!this.config.setup.css.styles[v])
+                    this.comic.ui["style name"].value=this.comic.ui["css code"].value="";
+                else{
+                    this.comic.ui["style name"].value=this.config.setup.css.styles[v][0];
+                    this.comic.ui["css code"].value=this.config.setup.css.styles[v][1];
+                }
+            }
+        });
+
+        this._createInput({
+            name:"Style Name", parent:"styles",width:"15ch",
+            onchange:(b)=>{
+                var v=this._stylePrepare();
+                this.config.setup.css.styles[v][0]=this.comic.ui["style name"].value;
+                this._quickApplyObjectSettings();
+            }
+        });
+        this._createInput({
+            name:"CSS Code", parent:"styles",multiline:true,
+            size:[10,5],width:"30ch",
+            onchange:(b)=>{
+                var v=this._stylePrepare();
+                this.config.setup.css.styles[v][1]=this.comic.ui["css code"].value;
+                this._quickApplyObjectSettings()
+            }
+        })
+
         return this;
+    }
+
+    _stylePrepare(v=null){
+        if (v==null)
+            v=Number(builder.comic.ui["styles"][2].value);
+        if (!this.config.setup.css.styles[v])
+            this.config.setup.css.styles[v]=["","",true];
+        return v;
     }
 
     applyObjectSettings(){
@@ -398,7 +428,7 @@ class ComicBuilder{
         L[index]={};//make empty
 
         //delete all empty objects in the layer
-        while(Object.keys(L[L.length-1])==0)
+        while(L.length && Object.keys(L[L.length-1])==0)
             L.pop();
         //delete all layers with only their empty settings
         L=setup.pages[page].layers;

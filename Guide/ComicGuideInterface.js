@@ -22,6 +22,7 @@ class ComicInterface{
         var L=M.interfaceLayer;
         this.length=this.manager.jsonComic.pages.length-1;
         //M.comic.node.onclick=console.log
+        M.comic.removeEventListener(M.comic.node,"click")
         M.comic.addEventListener(M.comic.node,"click",(e)=>this._onclick(e));
         this._initInterface();
     }

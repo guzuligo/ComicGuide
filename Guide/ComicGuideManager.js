@@ -71,7 +71,10 @@ class ComicManager{
         }
     }
     */
-    load(jsonComic){
+    load(jsonComic,_reorder=false){
+        if(_reorder)
+            jsonComic=this._reorder(jsonComic);
+
         this.pageNumber=0;
         
         var c=this.comic.clearCachedImages().clearPage().deleteCss(true);
@@ -88,7 +91,8 @@ class ComicManager{
         
         t=jsonComic.css.styles;
         for (var i in t)
-            c.setStyle(t[i][0],t[i][1],t[i][2]);
+            if(t[i])//make sure style exists
+                c.setStyle(t[i][0],t[i][1],t[i][2]);
         t=jsonComic.css.animations;
         for (var i in t)
             c.setAnimation(t[i][0],t[i][1]);
@@ -266,6 +270,43 @@ class ComicManager{
         return cNode;
     }
 
+
+    _reorder(obj){
+        //make a copy
+        obj=JSON.parse(JSON.stringify(obj));
+        var ip,il,i;
+
+
+
+        //fix children
+        for (ip=0;ip<obj.pages.length;ip++)
+         for (il=0;il<obj.pages[ip].layers.length;il++)
+          for (i=0;i<obj.pages[ip].layers[il].length;i++){
+            var l=obj.pages[ip].layers[il];
+            var o=l[i];
+            if (o.parent!=0 && l[o.parent]){
+                if(!l[o.parent].children)
+                    l[o.parent].children=[];
+                l[o.parent].children.push(o);
+                l[i]={};
+            }
+
+          }
+
+        //TODO:separate styles form animations
+        
+        for (i in obj.css.styles){
+            if (obj.css.styles[i] && obj.css.styles[i][0][0]=="@"){
+                
+                obj.css.styles[i][0]=obj.css.styles[i][0].substr(1);
+                obj.css.animations.push(obj.css.styles[i]);
+                delete obj.css.styles[i];
+            }
+        }
+
+        return obj;
+        
+    }
     
 
 
