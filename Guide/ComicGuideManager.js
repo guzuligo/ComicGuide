@@ -49,12 +49,14 @@ class ComicManager{
             this.time++;
     }
 
-    _basicSetup(){
+    _basicSetup(doSetupAgain=false){
+        //prevent redoing setup again
+                
         var c=this.comic;
         var oldTag=c.addingTag;c.addingTag="manager";
-        this.pageContainer=c.add(".div");//containing layers
-        this.page=c.add(".div",this.pageContainer);
-        this.interfaceLayer=c.add(".div");
+        if(!doSetupAgain || !this.pageContainer)this.pageContainer=c.add(".div");//containing layers
+        if(!doSetupAgain || !this.page)this.page=c.add(".div",this.pageContainer);
+        if(!doSetupAgain || !this.interfaceLayer)this.interfaceLayer=c.add(".div");
         c.addingTag=oldTag;
         return this;
     }
@@ -92,7 +94,7 @@ class ComicManager{
         t=jsonComic.css.styles;
         for (var i in t)
             if(t[i])//make sure style exists
-                c.setStyle(t[i][0],t[i][1],t[i][2]);
+                c.setStyle("."+t[i][0],t[i][1],t[i][2]);
         t=jsonComic.css.animations;
         for (var i in t)
             c.setAnimation(t[i][0],t[i][1]);

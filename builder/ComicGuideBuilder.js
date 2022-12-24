@@ -89,8 +89,11 @@ class ComicBuilder{
     _populateObject(){
         var ui=this.comic.ui
         //clean up
+        ui["animation code"].value="";
         while (ui["styles list"].childNodes.length)
             ui["styles list"].removeChild(ui["styles list"].childNodes[0]);
+        
+
 
         //this.comic.ui[""]
         var p=Number(ui["page"][2].value);
@@ -139,6 +142,8 @@ class ComicBuilder{
                 op.innerHTML=c[i];
                 ui["styles list"].appendChild(op)
             }
+
+            ui["animation code"].value=o.class[1];
         }
             
 
@@ -368,6 +373,20 @@ class ComicBuilder{
             options:[]
         });
 
+        this._createInput({
+            parent:"object setup",
+            name:"Animation Code",
+            width:"150px",multiline:true,
+            onchange:(b)=>{
+                var o=this._getObject();
+                if (!o)return;
+                if (!o.class)o.class=["",""];
+                o.class[1]=this.comic.ui["animation code"].value.trim();
+                //o.class[1]=o.class[1].trim();
+                this._populateObject()
+            }
+        })
+
 
         //Style menu
         this._createButtons({
@@ -391,7 +410,7 @@ class ComicBuilder{
             name:"Style Name", parent:"styles",width:"15ch",
             onchange:(b)=>{
                 var v=this._stylePrepare();
-                this.config.setup.css.styles[v][0]=this.comic.ui["style name"].value;
+                this.config.setup.css.styles[v][0]=this.comic.ui["style name"].value.trim();
                 this._quickApplyObjectSettings();
             }
         });
@@ -401,7 +420,7 @@ class ComicBuilder{
                 var o=this._getObject();
                 if (!o)return;
                 if (!o.class)o.class=["",""];
-                o.class[0]+=" "+this.comic.ui["style name"].value;
+                o.class[0]+=" "+this.comic.ui["style name"].value.trim();
                 o.class[0]=o.class[0].trim();
                 this._populateObject()
             }
