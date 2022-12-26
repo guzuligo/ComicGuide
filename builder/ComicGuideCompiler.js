@@ -15,15 +15,17 @@ class ComicCompiler{
         var html="";
         var ph=this.placeholder;
         var mainVars="var comic,manager,interface;"
-        var mainVarsSetup="comic=new ComicGuide.canvas($comic$,comicConfig.width,comicConfig.height);\n"
-        mainVarsSetup=mainVarsSetup.replace("$comic$","document.getElementById(comicConfig.comic)")
+        var mainVarsSetup=
+            "comic=new ComicGuide.canvas($comic$,comicConfig.width,comicConfig.height);\n"
+                                .replace("$comic$","document.getElementById(comicConfig.comic)")
         +"manager=new ComicGuide.manager(comic);\n"
         +"interface=new ComicGuide.interface(manager);\n";
 
-        var loadCode="comic.resize();manager.load(comicConfig.setup,true).goto(0)"
+        var loadCode="comic.maxSize=comicConfig.maxSize;\n"+
+            "comic.resize();\nmanager.load(comicConfig.setup,true).goto(0);\n"
 
         var loader=mainVars+"\nfunction loadComic(){\n"+mainVarsSetup+"\n"+loadCode+"\n}";
-        var body="<body onload='loadComic();'>\n"+this._strComicDivs()+"\n</body>"
+        var body="<body onload='loadComic();' class='Comic0Margin'>\n"+this._strComicDivs()+"\n</body>"
         html+="<html><header>\n"+this._strJsFiles()+ph+"1"+"\n</header>\n"+ph+"2"+"\n</html>";
         html=html.replace(ph+"2",body);
         html=html.replace(ph+"1",this._strConfigScript(loader));
@@ -43,7 +45,7 @@ class ComicCompiler{
 
     _strComicDivs(){
         var r=  '<div id="frame" style="width: 100%; height:100%">\n'+
-                '<div><div id="comic">\n</div></div>';
+                '<div><div id="comic">\n</div></div></div>';
         if (this.parentIsResizable){
             r='<div id="container" class="resizable"'+//TODO:Fix width and height.. maybe
             'style="float:left;resize: both;overflow: auto;width: 740px; height: 360px;">\n'

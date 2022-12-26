@@ -18,7 +18,7 @@ class ComicBuilder{
             container:"",
             width:740,
             height:360,
-            
+            maxScale:1,//used in compile only?
 
             setup:{
                 folder:"./",
