@@ -25,9 +25,15 @@ class ComicCompiler{
             "comic.resize();\nmanager.load(comicConfig.setup,true).goto(0);\n"
 
         var loader=mainVars+"\nfunction loadComic(){\n"+mainVarsSetup+"\n"+loadCode+"\n}";
-        var body="<body onload='loadComic();' class='Comic0Margin'>\n"+this._strComicDivs()+"\n</body>"
-        html+="<html><header>\n"+this._strJsFiles()+ph+"1"+"\n</header>\n"+ph+"2"+"\n</html>";
+        var body="<body onload='loadComic();' class='Comic0Margin' bgcolor='#444455'>\n"+this._strComicDivs()+"\n</body>"
+        //prepare html 
+        html+="<!DOCTYPE html><html><header>"
+            +"<meta name='viewport' content='width=device-width, initial-scale=1'>\n"
+            +this._strJsFiles()+ph+"1"+"\n</header>\n"+ph+"2"+"\n</html>";
+
+        //place body in html
         html=html.replace(ph+"2",body);
+        //place scripts in header
         html=html.replace(ph+"1",this._strConfigScript(loader));
         
         this.result=html;
