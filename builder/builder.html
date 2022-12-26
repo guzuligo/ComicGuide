@@ -5,6 +5,7 @@
 <script src="../Guide/ComicGuideCanvas.js"></script>
 <script src="../Guide/ComicGuideManager.js"></script>
 <script src="../Guide/ComicGuideInterface.js"></script>
+<script src="ComicGuideCompiler.js"></script>
 <script src="ComicGuideBuilder.js"></script>
 <script>
     function dd(d){return document.getElementById(d);}
@@ -23,6 +24,10 @@
 
     function saveConfig(){
         builder.saveConfig();
+    }
+
+    function exportHTML(){
+        builder.exportHTML();
     }
 
     function loadConfig(){
@@ -71,6 +76,7 @@ style="width: 740px; height: 360px; float:left; "><!--background-color: cadetblu
             <input value="740" style="width: 4ch;" id="width" onchange="resize()">X
             <input value="360" style="width: 4ch;" id="height"onchange="resize()">
             <button onclick="saveConfig()">SAVE</button>
+            <button onclick="exportHTML()">EXPORT</button>
             <input type="file" id="loadConfig" onchange="loadConfig()">
             
         </div>

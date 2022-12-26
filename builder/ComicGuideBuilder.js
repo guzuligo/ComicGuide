@@ -6,6 +6,7 @@ class ComicBuilder{
             canvas:null,
             manager:null,
             interface:null,
+            compiler:null,
             frame:null,
             container:null,
             ui:{},
@@ -49,6 +50,11 @@ class ComicBuilder{
             c.manager=new ComicGuide.manager(c.canvas);
         if(F||!c.interface)
             c.interface=new ComicGuide.interface(c.manager);
+        if(F||!c.compiler)
+            c.compiler=new ComicGuide.compiler(d);
+
+        
+        
         if (c.frame||d.frame)//do we have a frame somewhere?
             c.canvas.body=c.frame=(F||!c.frame)?dd(d.frame):c.frame;//use it
         //If container config available, use it the same as above
@@ -558,6 +564,8 @@ class ComicBuilder{
 
 
     saveConfig(){
+        this._saveFile("comicConfig.json",JSON.stringify(this.config));
+        /*
         var name_="comicConfig.json";
         var file = new File([JSON.stringify(this.config)],name_, {
             type: "text/plain",
@@ -566,7 +574,27 @@ class ComicBuilder{
         a.href= URL.createObjectURL(file);
         a.download = name_;
         a.click();
+        a.remove();
+        */
     }
+
+
+
+    exportHTML(){
+        this._saveFile("comic.html",this.comic.compiler.compile(this.config).result);
+    }
+
+    _saveFile(name,data){
+        var file = new File([data],name, {
+            type: "text/plain",
+        });
+        var a=document.createElement("a");
+        a.href= URL.createObjectURL(file);
+        a.download = name;
+        a.click();
+        a.remove();
+    }
+
 
     loadConfig(data){
         this.config= JSON.parse(data);
