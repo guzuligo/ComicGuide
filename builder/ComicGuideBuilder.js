@@ -240,6 +240,7 @@ class ComicBuilder{
 
         select.style=style;
         select.onchange=config.onchange||((e)=>console.log("Selection Changed:",select.value));
+        select.ondblclick=config.ondblclick||((e)=>console.log("Selection Doubleclicked:",select.value));
         this.comic.ui[config.name.toLowerCase()]=select;
         return this;
     }
@@ -373,9 +374,18 @@ class ComicBuilder{
         this._createSelection({
             parent:"object setup",
             name:"Styles List",
-            id:"object_type",
+            id:"styles_list",
             width:"7em",size:6,
-            
+            ondblclick:(e)=>{
+                var q=this.config.setup.css.styles;
+                for (var i=0;i<q.length;i++)
+                    if (q[i][0]==e.target.text){
+                        var s=this.comic.ui["styles"];
+                        s[2].value=i;
+                        s[2].onchange(s);
+                        break;
+                    }
+            },
             options:[]
         });
 

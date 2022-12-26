@@ -70,15 +70,21 @@ class ComicInterface{
     }
 
     _initInterface(){
+        console.log("Initializing interface bug. Why twice?")
         var r=this.manager.comic.document;
         var tag=this.manager.comic.styleTag;
 
         //
-        var st;
-        st=this._style=r.createElement('style');
+        var st=this._style;
+        //initialize if not existing
+        if (!st){
+            st=this._style= r.createElement('style');
+            r.getElementsByTagName('head')[0].appendChild(st);
+        }
+        st=this._style;
         st.type = 'text/css';
         st.innerHTML=this._getStyleFormat();
-        r.getElementsByTagName('head')[0].appendChild(st);
+        
         //
         
         var ii=this.manager.interfaceLayer;
