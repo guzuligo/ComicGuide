@@ -130,6 +130,8 @@ class ComicBuilder{
             var name="";
             if(o.node==".div")
                 name="Group"
+            else if(o.node=="..hold")
+                name="Hold"
             else
                 name="File"
             var to=this._optionToNumber(ui["type"],name);
@@ -294,6 +296,7 @@ class ComicBuilder{
     _quickApplyObjectSettings(){
         this.applyObjectSettings()
         this.reset(this.comic.ui["page"][2].value)
+        return this;
     }
 
 
@@ -348,7 +351,7 @@ class ComicBuilder{
             name:"Type",
             id:"object_type",
             width:"98px",
-            options:["Deleted","File","Group"]
+            options:["Deleted","File","Group","Hold"]
         });
 
         this._createInput({
@@ -361,6 +364,13 @@ class ComicBuilder{
             onchange:(b)=>{
                 var v=Number(b[2].value||0);
                 b[2].value=v<0?0:v;//Math.min(v,this.config.setup.pages.length);
+
+                var ui=this.comic.ui;
+                var o=this._getObject();
+                if (!o)return;
+                o.parent=Number(b[2].value)
+
+                this._populateObject();
             }
         });
 
@@ -433,24 +443,28 @@ class ComicBuilder{
         this._createButton({
             name:"➕", parent:"styles",
             onclick:(b)=>{
+                var ui=this.comic.ui;
                 var o=this._getObject();
                 if (!o)return;
                 if (!o.class)o.class=["",""];
                 o.class[0]+=" "+this.comic.ui["style name"].value.trim();
                 o.class[0]=o.class[0].trim();
-                this._populateObject()
+                var gotoPage=Number(ui["page"][2].value);
+                this._populateObject().reset(gotoPage)
             }
         });
         this._createButton({
             name:"➖", parent:"styles",
             onclick:(b)=>{
+                var ui=this.comic.ui;
                 var o=this._getObject();
                 if (!o)return;
                 if (!o.class)return ;//o.class=["",""];
-                var a=o.class[0].split(" ");
+                var a=o.class[0].trim().split(" ");
                 a[this.comic.ui["styles list"].selectedIndex]="";
                 o.class[0]=a.join(" ").trim();
-                this._populateObject()
+                var gotoPage=Number(ui["page"][2].value);
+                this._populateObject().reset(gotoPage)
             }
         });
 
@@ -509,6 +523,9 @@ class ComicBuilder{
                 break;
             case 'group':
                 obj.node='.div'
+                break;
+            case 'hold':
+                obj.node='..hold'
                 break;
         }
         return this;

@@ -253,14 +253,15 @@ class ComicManager{
                     this.timeline[i]=[];
                 {
                     var _z=e[i];
-                    console.log3("Timeline Function:",_z)
+                    this.log3("Timeline Function:",_z)
                     this.timeline[i].push({
                             fn:function(){
                                 //console.log("exe",this.f);
                                 if(!Array.isArray(this.f))
                                     this.f.call(this.cNode)
                                 else for (var i in this.f)
-                                    this.f[i].call(this.cNode)
+                                    if (this.f[i])
+                                        this.f[i].call(this.cNode)
                             },
                             cNode:cNode,
                             f:e[i]
@@ -280,12 +281,16 @@ class ComicManager{
 
 
 
-        //fix children
+        //Iterate over all objects
         for (ip=0;ip<obj.pages.length;ip++)
          for (il=0;il<obj.pages[ip].layers.length;il++)
           for (i=0;i<obj.pages[ip].layers[il].length;i++){
             var l=obj.pages[ip].layers[il];
             var o=l[i];
+            //ensure proper
+            if (!o.properties)
+                o.properties={};
+            //fix children
             if (o.parent!=0 && l[o.parent]){
                 if(!l[o.parent].children)
                     l[o.parent].children=[];
@@ -293,10 +298,41 @@ class ComicManager{
                 l[i]={};
             }
 
-          }
+            //fix audio
+            if (o.class && this.comic._cacheHelper_extensionType(o.node)=="audio"){
+                var [delay,volume]=o.class[1].split(" ")
+                if (delay){
+                    o.properties.autoplay=false;
+                    o.timeline=o.timeline||{};//ensure it exists
+                    if(!o.timeline[Number(delay)])
+                        o.timeline[Number(delay)]=[];
+                    var fn=function(){this.node.play()};
+                    o.timeline[Number(delay)].push(fn)
+                    //console.log(o.timeline[Number(delay)])
+                }
 
-        //TODO:separate styles form animations
-        
+                if(volume)
+                    o.properties.volume=volume
+            }
+
+            //TODO:Fix layers
+            
+            switch(o.node){
+                case "..hold":
+                    var tag="page"+ip;
+                    o.node=".div";
+                    //.tag="page"+ip;
+                    if (!obj.pages[ip].exceptions)
+                        obj.pages[ip].exceptions=[];
+                    obj.pages[ip].exceptions.push(tag)
+                    break;
+                default:break;
+            }
+                
+
+          }//done iterating on objects
+
+        //separate styles form animations
         for (i in obj.css.styles){
             if (obj.css.styles[i] && obj.css.styles[i][0][0]=="@"){
                 
@@ -305,6 +341,11 @@ class ComicManager{
                 delete obj.css.styles[i];
             }
         }
+
+
+        
+
+
 
         return obj;
         
